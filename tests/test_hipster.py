@@ -3,14 +3,14 @@ from pathlib import Path
 import pandas as pd
 import pytest
 import torch
-
-from hipster import Hipster
 from spherinator.data import ShapesDataModule
 from spherinator.models import (
     ConvolutionalDecoder,
     ConvolutionalEncoder,
     RotationalVariationalAutoencoderPower,
 )
+
+from hipster import Hipster
 
 
 @pytest.fixture
