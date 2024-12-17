@@ -16,8 +16,8 @@ from hipster import Hipster
 @pytest.fixture
 def model():
     model = RotationalVariationalAutoencoderPower(
-        encoder=ConvolutionalEncoder(latent_dim=256),
-        decoder=ConvolutionalDecoder(latent_dim=256),
+        encoder=ConvolutionalEncoder(h_dim=256),
+        decoder=ConvolutionalDecoder(h_dim=256),
         z_dim=3,
         rotations=4,
     )
