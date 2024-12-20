@@ -18,7 +18,6 @@ import torchvision.transforms.functional as functional
 from astropy.io.votable import writeto
 from astropy.table import Table
 from PIL import Image
-
 from spherinator.data import SpherinatorDataModule
 from spherinator.models import SpherinatorModule
 
@@ -402,9 +401,7 @@ class Hipster:
                 flush=True,
             )
             if self.number_of_workers == 1:
-                create_hips_tile(
-                    self, model, i, range(12 * 4**i // self.number_of_workers)
-                )
+                create_hips_tile(self, model, i, range(12 * 4**i))
             else:
                 mypool = []
                 for t in range(self.number_of_workers):
