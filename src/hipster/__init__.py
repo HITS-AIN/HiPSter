@@ -1,5 +1,5 @@
-from .hipster import Hipster
+from .generate_hips import generate_hips
 
 __all__ = [
-    "Hipster",
+    "generate_hips",
 ]
