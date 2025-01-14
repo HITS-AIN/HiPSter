@@ -11,34 +11,33 @@ def create_hips_tile(
     i: int,
     range_j: range,
 ):
-    print("hey")
-    # for j in range_j:
-    #     vectors = torch.zeros(
-    #         (hipster.hierarchy**2, 3), dtype=torch.float32
-    #     )  # prepare vor n*n subtiles
-    #     for sub in range(
-    #         hipster.hierarchy**2
-    #     ):  # calculate coordinates for all n*n subpixels
-    #         vector = healpy.pix2vec(
-    #             2**i * hipster.hierarchy, j * hipster.hierarchy**2 + sub, nest=True
-    #         )
-    #         vectors[sub] = torch.tensor(vector).reshape(1, 3).type(dtype=torch.float32)
-    #     data = model.reconstruct(vectors)
-    #     image = hipster.generate_tile(data, i, j, hipster.hierarchy, 0)
-    #     image = Image.fromarray(
-    #         (numpy.clip(image.detach().numpy(), 0, 1) * 255).astype(numpy.uint8)
-    #     )
-    #     image.save(
-    #         os.path.join(
-    #             hipster.output_folder,
-    #             hipster.title,
-    #             "model",
-    #             "Norder" + str(i),
-    #             "Dir" + str(int(math.floor(j / 10000)) * 10000),
-    #             "Npix" + str(j) + ".jpg",
-    #         )
-    #     )
-    #     print(".", end="", flush=True)
+    for j in range_j:
+        vectors = torch.zeros(
+            (hipster.hierarchy**2, 3), dtype=torch.float32
+        )  # prepare vor n*n subtiles
+        for sub in range(
+            hipster.hierarchy**2
+        ):  # calculate coordinates for all n*n subpixels
+            vector = healpy.pix2vec(
+                2**i * hipster.hierarchy, j * hipster.hierarchy**2 + sub, nest=True
+            )
+            vectors[sub] = torch.tensor(vector).reshape(1, 3).type(dtype=torch.float32)
+        data = model.reconstruct(vectors)
+        image = hipster.generate_tile(data, i, j, hipster.hierarchy, 0)
+        image = Image.fromarray(
+            (numpy.clip(image.detach().numpy(), 0, 1) * 255).astype(numpy.uint8)
+        )
+        image.save(
+            os.path.join(
+                hipster.output_folder,
+                hipster.title,
+                "model",
+                "Norder" + str(i),
+                "Dir" + str(int(math.floor(j / 10000)) * 10000),
+                "Npix" + str(j) + ".jpg",
+            )
+        )
+        print(".", end="", flush=True)
 
 
 def generate_hips(
@@ -55,7 +54,6 @@ def generate_hips(
         number_of_workers (int, optional): Number of workers to use. Defaults to 1.
     """
     ort_encoder = ort.InferenceSession(os.fspath(encoder_path))
-    print(ort.get_device())
 
     for i in range(max_order + 1):
         print(
