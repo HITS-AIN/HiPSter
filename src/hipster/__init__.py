@@ -1,9 +1,9 @@
-from .generate_hips import generate_hips
+from .hips_generator import HiPSGenerator
 from .reconstruction import Reconstruction
 from .spectrum_plotter import SpectrumPlotter
 
 __all__ = [
-    "generate_hips",
+    "HiPSGenerator",
     "Reconstruction",
     "SpectrumPlotter",
 ]

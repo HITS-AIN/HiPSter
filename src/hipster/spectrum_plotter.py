@@ -10,17 +10,27 @@ class SpectrumPlotter:
         wavelengths: np.ndarray,
         axis: bool = False,
         ylim: tuple | None = None,
+        figsize_in_pixel: int = 800,
+        dpi: int = 96,
+        return_type: str = "ndarray",
     ):
-        """_summary_
+        """Plot a spectrum with a spectral colormap in the background.
 
         Args:
             wavelengths (np.ndarray): Wavelengths of the spectrum.
             axis (bool, optional): Print axis labels. Defaults to False.
             ylim (tuple, optional): Y-axis limits. Defaults to (0.0, 1.0).
+            figsize_in_pixel (int, optional): Size of the figure in pixels. Defaults to 800.
+            dpi (int, optional): Dots per inch. Defaults to 96.
+            return_type (str, optional): Type of return value ['plot', 'ndarray']. Defaults to "ndarray".
         """
         self.wavelengths = wavelengths
         self.axis = axis
         self.ylim = ylim
+        self.figsize = figsize_in_pixel / dpi
+        self.dpi = dpi
+        self.return_type = return_type
+
         self.clim = (350, 780)
         norm = plt.Normalize(*self.clim)
         wl = np.arange(self.clim[0], self.clim[1] + 1, 2)
@@ -31,7 +41,7 @@ class SpectrumPlotter:
 
     def __call__(self, spectrum: np.ndarray) -> plt.Axes:
 
-        _, ax = plt.subplots(figsize=(4, 4))
+        fig, ax = plt.subplots(figsize=(self.figsize, self.figsize), dpi=self.dpi)
         ax.plot(self.wavelengths, spectrum, color="black")
 
         y = np.linspace(0, 6, 100)
@@ -58,7 +68,17 @@ class SpectrumPlotter:
             ax.axis("off")
 
         ax.fill_between(self.wavelengths, spectrum, 8, color="w")
-        return ax
+
+        if self.return_type == "plot":
+            return ax
+        elif self.return_type == "ndarray":
+            canvas = fig.canvas
+            canvas.draw()
+            data = np.frombuffer(canvas.tostring_rgb(), dtype="uint8")
+            data = data.reshape(*reversed(canvas.get_width_height()), 3)
+            return data
+        else:
+            raise RuntimeError("Invalid return type. Choose 'axes' or 'ndarray'.")
 
     def __wavelength_to_rgb(self, wavelength, gamma=0.8):
         """taken from http://www.noah.org/wiki/Wavelength_to_RGB_in_Python
