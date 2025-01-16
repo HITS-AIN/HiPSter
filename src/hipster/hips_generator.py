@@ -5,7 +5,8 @@ import os
 import healpy
 import numpy as np
 from PIL import Image
-from tqdm.contrib.concurrent import process_map
+
+# from tqdm.contrib.concurrent import process_map
 
 
 class HiPSGenerator:

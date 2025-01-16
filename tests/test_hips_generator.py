@@ -1,5 +1,4 @@
 import numpy as np
-import pytest
 
 from hipster import HiPSGenerator, Reconstruction, SpectrumPlotter
 
