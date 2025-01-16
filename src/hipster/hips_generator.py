@@ -48,7 +48,7 @@ class HiPSGenerator:
                 )
             recon = self.reconstruction(vectors)
             image = self.generate_tile(recon, i, j, self.hierarchy, 0)
-            image = Image.fromarray((np.clip(image, 0, 1) * 255).astype(np.uint8))
+            image = Image.fromarray(image)
             image.save(
                 os.path.join(
                     self.output_folder,

@@ -42,6 +42,10 @@ class SpectrumPlotter:
     def __call__(self, spectrum: np.ndarray) -> plt.Axes:
 
         fig, ax = plt.subplots(figsize=(self.figsize, self.figsize), dpi=self.dpi)
+        # fig = plt.figure(figsize=(self.figsize, self.figsize), dpi=self.dpi)
+        # ax = fig.gca()
+        # ax.axis("tight")
+
         ax.plot(self.wavelengths, spectrum, color="black")
 
         y = np.linspace(0, 6, 100)
@@ -73,7 +77,7 @@ class SpectrumPlotter:
             return ax
         elif self.return_type == "ndarray":
             canvas = fig.canvas
-            canvas.draw()
+            canvas.draw_idle()
             data = np.frombuffer(canvas.tostring_rgb(), dtype="uint8")
             data = data.reshape(*reversed(canvas.get_width_height()), 3)
             return data
