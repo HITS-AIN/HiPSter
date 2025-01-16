@@ -39,7 +39,7 @@ class SpectrumPlotter:
             "spectrum", colorlist
         )
 
-    def __call__(self, spectrum: np.ndarray) -> plt.Axes:
+    def __call__(self, spectrum: np.ndarray):
 
         fig, ax = plt.subplots(figsize=(self.figsize, self.figsize), dpi=self.dpi)
         # fig = plt.figure(figsize=(self.figsize, self.figsize), dpi=self.dpi)

@@ -96,7 +96,7 @@ class HiPSGenerator:
         q4 = self.generate_tile(
             data, order + 1, pixel * 4 + 3, hierarchy / 2, index * 4 + 3
         )
-        result = np.ndarray((q1.shape[0] * 2, q1.shape[1] * 2, 3))
+        result = np.ndarray((q1.shape[0] * 2, q1.shape[1] * 2, 3), dtype=np.uint8)
         result[: q1.shape[0], : q1.shape[1]] = q1
         result[q1.shape[0] :, : q1.shape[1]] = q2
         result[: q1.shape[0], q1.shape[1] :] = q3

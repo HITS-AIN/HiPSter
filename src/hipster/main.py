@@ -1,13 +1,11 @@
 #!/usr/bin/env python3
 
 import argparse
-import importlib
 import sys
 
-import torch
 import yaml
 
-from .hipster import Hipster
+from hipster import HiPSGenerator, Reconstruction, SpectrumPlotter
 
 
 def main() -> int:
@@ -91,31 +89,6 @@ def main() -> int:
 
     with open(args.config, "r", encoding="utf-8") as stream:
         config = yaml.load(stream, Loader=yaml.Loader)
-
-    # Import the model class and create an instance of it
-    model = None
-    if any(x in ["hips", "catalog"] for x in args.task):
-        model_class_path = config["model"]["class_path"]
-        module_name, class_name = model_class_path.rsplit(".", 1)
-        module = importlib.import_module(module_name)
-        model_class = getattr(module, class_name)
-        model_init_args = config["model"]["init_args"]
-        model = model_class(**model_init_args)
-        # FIXME: This is a hack to load the model on the GPU
-        # See https://pytorch.org/docs/stable/generated/torch.load.html for map_location
-        checkpoint = torch.load(args.checkpoint, map_location="cuda:0")
-        model.load_state_dict(checkpoint["state_dict"])
-        model.eval()
-
-    # Import the data module and create an instance of it
-    datamodule = None
-    if any(x in ["catalog", "projection", "images", "thumbnails"] for x in args.task):
-        data_class_path = config["data"]["class_path"]
-        module_name, class_name = data_class_path.rsplit(".", 1)
-        module = importlib.import_module(module_name)
-        data_class = getattr(module, class_name)
-        data_init_args = config["data"]["init_args"]
-        datamodule = data_class(**data_init_args)
 
     hipster = Hipster(
         args.output_folder,
