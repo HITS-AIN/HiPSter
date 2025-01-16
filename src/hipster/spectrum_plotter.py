@@ -78,8 +78,8 @@ class SpectrumPlotter:
         elif self.return_type == "ndarray":
             canvas = fig.canvas
             canvas.draw_idle()
-            data = np.frombuffer(canvas.tostring_rgb(), dtype="uint8")
-            data = data.reshape(*reversed(canvas.get_width_height()), 3)
+            data = np.frombuffer(canvas.tostring_argb(), dtype="uint8")
+            data = data.reshape(*reversed(canvas.get_width_height()), 4)[:, :, 1:4]
             return data
         else:
             raise RuntimeError("Invalid return type. Choose 'axes' or 'ndarray'.")
