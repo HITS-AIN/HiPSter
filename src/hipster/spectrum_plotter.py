@@ -1,4 +1,7 @@
+import matplotlib
 import matplotlib.colors
+
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -47,7 +50,7 @@ class SpectrumPlotter:
         # ax.axis("tight")
 
         # Create the spectrum plot up to 10% above the maximum intensity to avoid artifacts in the image
-        spectrum_max = np.max(spectrum) * 1.1
+        spectrum_max = max(1.0, np.max(spectrum) * 1.1)
         ax.plot(self.wavelengths, spectrum, color="black", linewidth=0.5)
 
         y = np.linspace(0, spectrum_max, 100)
@@ -55,9 +58,7 @@ class SpectrumPlotter:
 
         extent = (
             np.min(self.wavelengths),
-            np.max(
-                self.wavelengths[:-1]
-            ),  # exclude the last value to avoid artifacts in the image
+            np.max(self.wavelengths),
             np.min(y),
             np.max(y),
         )
