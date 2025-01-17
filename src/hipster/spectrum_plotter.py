@@ -46,14 +46,18 @@ class SpectrumPlotter:
         # ax = fig.gca()
         # ax.axis("tight")
 
-        ax.plot(self.wavelengths, spectrum, color="black")
+        # Create the spectrum plot up to 10% above the maximum intensity to avoid artifacts in the image
+        spectrum_max = np.max(spectrum) * 1.1
+        ax.plot(self.wavelengths, spectrum, color="black", linewidth=0.5)
 
-        y = np.linspace(0, 6, 100)
+        y = np.linspace(0, spectrum_max, 100)
         X, Y = np.meshgrid(self.wavelengths, y)
 
         extent = (
             np.min(self.wavelengths),
-            np.max(self.wavelengths),
+            np.max(
+                self.wavelengths[:-1]
+            ),  # exclude the last value to avoid artifacts in the image
             np.min(y),
             np.max(y),
         )
@@ -61,6 +65,8 @@ class SpectrumPlotter:
         ax.imshow(
             X, clim=self.clim, extent=extent, cmap=self.spectralmap, aspect="auto"
         )
+        # Fill the area above the spectrum with white. Add 10% to avoid artifacts in the image.
+        ax.fill_between(self.wavelengths, spectrum, spectrum_max * 1.1, color="w")
 
         if self.ylim:
             ax.set_ylim(self.ylim)
@@ -70,8 +76,6 @@ class SpectrumPlotter:
             ax.set_ylabel("Intensity")
         else:
             ax.axis("off")
-
-        ax.fill_between(self.wavelengths, spectrum, 8, color="w")
 
         if self.return_type == "plot":
             return ax
