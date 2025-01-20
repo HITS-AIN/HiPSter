@@ -34,8 +34,6 @@ class AbsorptionLinePlotter:
         self.figsize = figsize_in_pixel / dpi
         self.dpi = dpi
         self.return_type = return_type
-        self.flux_factor = 2e13
-        # self.flux_factor = 1.0
 
     def __call__(self, flux: np.ndarray):
 
@@ -47,7 +45,7 @@ class AbsorptionLinePlotter:
             base_color = wavelength_to_rgb(wl, gamma=0.8)
             # Scale the color by flux to adjust brightness
             # You could adjust scaling or normalization here if needed.
-            color_col = [c * flux[i] * self.flux_factor for c in base_color]
+            color_col = [c * flux[i] for c in base_color]
 
             # Fill this column (all rows in column i have the same color)
             spectrum_image_rgb[:, i, :] = color_col
