@@ -12,30 +12,27 @@ class AbsorptionLinePlotter:
     def __init__(
         self,
         wavelengths: np.ndarray,
-        axis: bool = False,
-        ylim: tuple | None = None,
+        normalize: bool = True,
         figsize_in_pixel: int = 800,
         dpi: int = 96,
-        return_type: str = "ndarray",
     ):
         """Plot a spectrum with a spectral colormap in the background.
 
         Args:
             wavelengths (np.ndarray): Wavelengths of the spectrum.
-            axis (bool, optional): Print axis labels. Defaults to False.
-            ylim (tuple, optional): Y-axis limits. Defaults to (0.0, 1.0).
+            normalize (bool, optional): Normalize the spectrum. Defaults to True.
             figsize_in_pixel (int, optional): Size of the figure in pixels. Defaults to 800.
             dpi (int, optional): Dots per inch. Defaults to 96.
-            return_type (str, optional): Type of return value ['plot', 'ndarray']. Defaults to "ndarray".
         """
         self.wavelengths = wavelengths
-        self.axis = axis
-        self.ylim = ylim
+        self.normalize = normalize
         self.figsize = figsize_in_pixel / dpi
         self.dpi = dpi
-        self.return_type = return_type
 
-    def __call__(self, flux: np.ndarray):
+    def __call__(self, flux: np.ndarray) -> np.ndarray:
+
+        if self.normalize:
+            flux = (flux - np.min(flux)) / (np.max(flux) - np.min(flux))
 
         height = 100  # how "tall" you want the 2D image
         n_wl = len(self.wavelengths)
@@ -54,15 +51,14 @@ class AbsorptionLinePlotter:
         fig.tight_layout()
 
         ax.imshow(spectrum_image_rgb, origin="lower", aspect="auto")
-        # ax.axis("off")
+        ax.axis("off")
 
-        if self.return_type == "plot":
-            return ax
-        elif self.return_type == "ndarray":
-            canvas = fig.canvas
-            canvas.draw_idle()
-            data = np.frombuffer(canvas.tostring_argb(), dtype="uint8")
-            data = data.reshape(*reversed(canvas.get_width_height()), 4)[:, :, 1:4]
-            return data
-        else:
-            raise RuntimeError("Invalid return type. Choose 'axes' or 'ndarray'.")
+        plt.subplots_adjust(0, 0, 1, 1, 0, 0)
+
+        canvas = fig.canvas
+        canvas.draw_idle()
+        data = np.frombuffer(canvas.tostring_argb(), dtype="uint8")
+        data = data.reshape(*reversed(canvas.get_width_height()), 4)[:, :, 1:4]
+
+        plt.close(fig)
+        return data

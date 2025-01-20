@@ -5,7 +5,12 @@ import sys
 
 import numpy as np
 
-from hipster import HiPSGenerator, Reconstruction, SpectrumPlotter
+from hipster import (
+    AbsorptionLinePlotter,
+    HiPSGenerator,
+    Reconstruction,
+    SpectrumPlotter,
+)
 
 
 def main() -> int:
@@ -44,11 +49,19 @@ def main() -> int:
     )
     args = parser.parse_args()
 
+    plotter = "absorption_line"
+    if plotter == "spectrum":
+        image_maker = SpectrumPlotter(
+            np.arange(336, 1023, 2), ylim=(0, 1), figsize_in_pixel=args.size
+        )
+    else:
+        image_maker = AbsorptionLinePlotter(
+            np.arange(336, 1023, 2), figsize_in_pixel=args.size
+        )
+
     hips_generator = HiPSGenerator(
         reconstruction=Reconstruction(args.decoder),
-        image_maker=SpectrumPlotter(
-            np.arange(336, 1023, 2), ylim=(0, 1), figsize_in_pixel=args.size
-        ),
+        image_maker=image_maker,
         output_folder=args.output_folder,
         hierarchy=args.hierarchy,
     )
