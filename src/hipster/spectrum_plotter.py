@@ -1,5 +1,3 @@
-from string import whitespace
-
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
