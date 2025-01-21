@@ -1,23 +1,23 @@
 import numpy as np
+import pytest
 
-from hipster import SpectrumPlotter
+from hipster import AbsorptionLinePlotter, SpectrumPlotter
 
 
-def test_spectrum_plotter():
+@pytest.mark.parametrize("plotter", ["spectrum", "absorption_line"])
+def test_spectrum_plotter(plotter):
     wavelengths = np.arange(200, 1000, 1000)
     spectrum = (5 + np.sin(wavelengths * 0.1) ** 2) * np.exp(
         -0.00002 * (wavelengths - 600) ** 2
     )
-    spectrum_plotter = SpectrumPlotter(wavelengths, return_type="plot")
-    spectrum = spectrum_plotter(spectrum)
-    assert spectrum is not None
 
+    if plotter == "spectrum":
+        spectrum_plotter = SpectrumPlotter(wavelengths)
+    elif plotter == "absorption_line":
+        spectrum_plotter = AbsorptionLinePlotter(wavelengths)
+    else:
+        raise ValueError(f"Unknown plotter: {plotter}")
 
-def test_spectrum_plotter_ndarray():
-    wavelengths = np.arange(200, 1000, 1000)
-    spectrum = (5 + np.sin(wavelengths * 0.1) ** 2) * np.exp(
-        -0.00002 * (wavelengths - 600) ** 2
-    )
-    spectrum_plotter = SpectrumPlotter(wavelengths, return_type="ndarray")
     spectrum = spectrum_plotter(spectrum)
-    assert spectrum is not None
+
+    assert spectrum.shape == (800, 800, 3)
