@@ -16,6 +16,7 @@ class AbsorptionLinePlotter:
         figsize_in_pixel: int = 800,
         dpi: int = 96,
         margin: float = 0.0,
+        dark_background: bool = True,
     ):
         """Plot a spectrum with a spectral colormap in the background.
 
@@ -25,14 +26,19 @@ class AbsorptionLinePlotter:
             figsize_in_pixel (int, optional): Size of the figure in pixels. Defaults to 800.
             dpi (int, optional): Dots per inch. Defaults to 96.
             margin (float, optional): Margin around the plot. Defaults to 0.0.
+            dark_background (bool, optional): Use dark background. Defaults to True.
         """
         self.wavelengths = wavelengths
         self.normalize = normalize
         self.figsize = figsize_in_pixel / dpi
         self.dpi = dpi
         self.margin = margin
+        self.dark_background = dark_background
 
     def __call__(self, flux: np.ndarray) -> np.ndarray:
+
+        if self.dark_background:
+            plt.style.use("dark_background")
 
         if self.normalize:
             flux = (flux - np.min(flux)) / (np.max(flux) - np.min(flux))
@@ -65,5 +71,7 @@ class AbsorptionLinePlotter:
         data = np.frombuffer(canvas.tostring_argb(), dtype="uint8")
         data = data.reshape(*reversed(canvas.get_width_height()), 4)[:, :, 1:4]
 
+        plt.style.use("default")
         plt.close(fig)
+
         return data

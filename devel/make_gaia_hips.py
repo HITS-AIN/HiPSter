@@ -52,11 +52,16 @@ def main() -> int:
     plotter = "absorption_line"
     if plotter == "spectrum":
         image_maker = SpectrumPlotter(
-            np.arange(336, 1023, 2), ylim=(0, 1), figsize_in_pixel=args.size
+            np.arange(336, 1023, 2),
+            ylim=(0, 1),
+            figsize_in_pixel=args.size,
+            margin=0.02,
         )
     else:
         image_maker = AbsorptionLinePlotter(
-            np.arange(336, 1023, 2), figsize_in_pixel=args.size
+            np.arange(336, 1023, 2),
+            figsize_in_pixel=args.size,
+            margin=0.02,
         )
 
     hips_generator = HiPSGenerator(

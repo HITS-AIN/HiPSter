@@ -1,3 +1,5 @@
+from string import whitespace
+
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
@@ -17,6 +19,7 @@ class SpectrumPlotter:
         figsize_in_pixel: int = 800,
         dpi: int = 96,
         margin: float = 0.0,
+        dark_background: bool = True,
     ):
         """Plot a spectrum with a spectral colormap in the background.
 
@@ -27,6 +30,7 @@ class SpectrumPlotter:
             figsize_in_pixel (int, optional): Size of the figure in pixels. Defaults to 800.
             dpi (int, optional): Dots per inch. Defaults to 96.
             margin (float, optional): Margin around the plot. Defaults to 0.0.
+            dark_background (bool, optional): Use dark background. Defaults to True.
         """
         self.wavelengths = wavelengths
         self.axis = axis
@@ -34,6 +38,7 @@ class SpectrumPlotter:
         self.figsize = figsize_in_pixel / dpi
         self.dpi = dpi
         self.margin = margin
+        self.dark_background = dark_background
 
         self.clim = (350, 780)
         norm = plt.Normalize(*self.clim)
@@ -45,14 +50,21 @@ class SpectrumPlotter:
 
     def __call__(self, spectrum: np.ndarray):
 
+        if self.dark_background:
+            plt.style.use("dark_background")
+
+        if self.dark_background:
+            line_color = "white"
+            background_color = "black"
+        else:
+            line_color = "black"
+            background_color = "white"
+
         fig, ax = plt.subplots(figsize=(self.figsize, self.figsize), dpi=self.dpi)
-        # fig = plt.figure(figsize=(self.figsize, self.figsize), dpi=self.dpi)
-        # ax = fig.gca()
-        # ax.axis("tight")
 
         # Create the spectrum plot up to 10% above the maximum intensity to avoid artifacts in the image
         spectrum_max = max(1.0, np.max(spectrum) * 1.1)
-        ax.plot(self.wavelengths, spectrum, color="black", linewidth=0.5)
+        ax.plot(self.wavelengths, spectrum, color=line_color, linewidth=1)
 
         y = np.linspace(0, spectrum_max, 100)
         X, Y = np.meshgrid(self.wavelengths, y)
@@ -68,7 +80,9 @@ class SpectrumPlotter:
             X, clim=self.clim, extent=extent, cmap=self.spectralmap, aspect="auto"
         )
         # Fill the area above the spectrum with white. Add 10% to avoid artifacts in the image.
-        ax.fill_between(self.wavelengths, spectrum, spectrum_max * 1.1, color="w")
+        ax.fill_between(
+            self.wavelengths, spectrum, spectrum_max * 1.1, color=background_color
+        )
 
         if self.ylim:
             ax.set_ylim(self.ylim)
@@ -88,5 +102,7 @@ class SpectrumPlotter:
         data = np.frombuffer(canvas.tostring_argb(), dtype="uint8")
         data = data.reshape(*reversed(canvas.get_width_height()), 4)[:, :, 1:4]
 
+        plt.style.use("default")
         plt.close(fig)
+
         return data
