@@ -16,6 +16,7 @@ class SpectrumPlotter:
         ylim: tuple | None = None,
         figsize_in_pixel: int = 800,
         dpi: int = 96,
+        margin: float = 0.0,
     ):
         """Plot a spectrum with a spectral colormap in the background.
 
@@ -25,12 +26,14 @@ class SpectrumPlotter:
             ylim (tuple, optional): Y-axis limits. Defaults to (0.0, 1.0).
             figsize_in_pixel (int, optional): Size of the figure in pixels. Defaults to 800.
             dpi (int, optional): Dots per inch. Defaults to 96.
+            margin (float, optional): Margin around the plot. Defaults to 0.0.
         """
         self.wavelengths = wavelengths
         self.axis = axis
         self.ylim = ylim
         self.figsize = figsize_in_pixel / dpi
         self.dpi = dpi
+        self.margin = margin
 
         self.clim = (350, 780)
         norm = plt.Normalize(*self.clim)
@@ -76,7 +79,9 @@ class SpectrumPlotter:
         else:
             ax.axis("off")
 
-        plt.subplots_adjust(0, 0, 1, 1, 0, 0)
+        plt.subplots_adjust(
+            0 + self.margin, 0 + self.margin, 1 - self.margin, 1 - self.margin, 0, 0
+        )
 
         canvas = fig.canvas
         canvas.draw_idle()
