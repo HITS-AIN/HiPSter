@@ -3,8 +3,6 @@ from pathlib import Path
 
 import numpy
 import skimage.io as io
-import torch
-import torchvision.transforms.v2 as transforms
 from PIL import Image
 
 

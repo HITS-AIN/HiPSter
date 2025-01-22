@@ -6,7 +6,7 @@ import sys
 
 import yaml
 
-from hipster import HiPSGenerator, Reconstruction, SpectrumPlotter
+from hipster import HiPSGenerator, Inference, SpectrumPlotter
 
 
 def main() -> int:

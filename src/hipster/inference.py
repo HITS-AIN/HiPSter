@@ -4,7 +4,7 @@ import numpy as np
 import onnxruntime as ort
 
 
-class Reconstruction:
+class Inference:
 
     def __init__(
         self,

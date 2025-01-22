@@ -5,12 +5,7 @@ import sys
 
 import numpy as np
 
-from hipster import (
-    AbsorptionLinePlotter,
-    HiPSGenerator,
-    Reconstruction,
-    SpectrumPlotter,
-)
+from hipster import AbsorptionLinePlotter, HiPSGenerator, Inference, SpectrumPlotter
 
 
 def main() -> int:
@@ -65,7 +60,7 @@ def main() -> int:
         )
 
     hips_generator = HiPSGenerator(
-        reconstruction=Reconstruction(args.decoder),
+        reconstruction=Inference(args.decoder),
         image_maker=image_maker,
         output_folder=args.output_folder,
         hierarchy=args.hierarchy,

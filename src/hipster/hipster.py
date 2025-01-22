@@ -13,13 +13,9 @@ import healpy
 import numpy
 import pandas as pd
 import psutil
-import torch
-import torchvision.transforms.functional as functional
 from astropy.io.votable import writeto
 from astropy.table import Table
 from PIL import Image
-from spherinator.data import SpherinatorDataModule
-from spherinator.models import SpherinatorModule
 
 from .create_allsky import create_allsky
 
