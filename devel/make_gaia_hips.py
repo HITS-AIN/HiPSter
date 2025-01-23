@@ -42,21 +42,30 @@ def main() -> int:
         type=int,
         help="Image output size (default = 64).",
     )
+    parser.add_argument(
+        "--image_type",
+        default="spectrum",
+        help="Image type for HiPS tiles ['spectrum', 'absorption_line'](default = 'spectrum').",
+    )
     args = parser.parse_args()
 
-    image_maker = SpectrumPlotter(
-        np.arange(336, 1023, 2),
-        ylim=(0, 1),
-        figsize_in_pixel=args.size,
-        margin=0.02,
-        flip=True,
-    )
-    # image_maker = AbsorptionLinePlotter(
-    #     np.arange(336, 1023, 2),
-    #     figsize_in_pixel=args.size,
-    #     margin=0.02,
-    #     flip=True,
-    # )
+    if args.image_type == "spectrum":
+        image_maker = SpectrumPlotter(
+            np.arange(336, 1023, 2),
+            ylim=(0, 1),
+            figsize_in_pixel=args.size,
+            margin=0.02,
+            flip=True,
+        )
+    elif args.image_type == "absorption_line":
+        image_maker = AbsorptionLinePlotter(
+            np.arange(336, 1023, 2),
+            figsize_in_pixel=args.size,
+            margin=0.02,
+            flip=True,
+        )
+    else:
+        raise ValueError("Image type must be 'spectrum' or 'absorption_line'.")
 
     hips_generator = HiPSGenerator(
         reconstruction=Inference(args.decoder),
