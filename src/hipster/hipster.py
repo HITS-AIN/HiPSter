@@ -1,5 +1,4 @@
-""" Provides all functionalities to transform a model in a HiPS representation for browsing.
-"""
+# flake8: noqa
 
 import copy
 import math

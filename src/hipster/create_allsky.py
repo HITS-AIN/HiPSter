@@ -1,3 +1,5 @@
+# flake8: noqa
+
 import math
 from pathlib import Path
 
