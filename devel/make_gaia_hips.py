@@ -44,20 +44,19 @@ def main() -> int:
     )
     args = parser.parse_args()
 
-    plotter = "absorption_line"
-    if plotter == "spectrum":
-        image_maker = SpectrumPlotter(
-            np.arange(336, 1023, 2),
-            ylim=(0, 1),
-            figsize_in_pixel=args.size,
-            margin=0.02,
-        )
-    else:
-        image_maker = AbsorptionLinePlotter(
-            np.arange(336, 1023, 2),
-            figsize_in_pixel=args.size,
-            margin=0.02,
-        )
+    image_maker = SpectrumPlotter(
+        np.arange(336, 1023, 2),
+        ylim=(0, 1),
+        figsize_in_pixel=args.size,
+        margin=0.02,
+        flip=True,
+    )
+    # image_maker = AbsorptionLinePlotter(
+    #     np.arange(336, 1023, 2),
+    #     figsize_in_pixel=args.size,
+    #     margin=0.02,
+    #     flip=True,
+    # )
 
     hips_generator = HiPSGenerator(
         reconstruction=Inference(args.decoder),

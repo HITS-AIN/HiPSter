@@ -17,6 +17,7 @@ class AbsorptionLinePlotter:
         dpi: int = 96,
         margin: float = 0.0,
         dark_background: bool = True,
+        flip: bool = False,
     ):
         """Plot a spectrum with a spectral colormap in the background.
 
@@ -27,6 +28,7 @@ class AbsorptionLinePlotter:
             dpi (int, optional): Dots per inch. Defaults to 96.
             margin (float, optional): Margin around the plot. Defaults to 0.0.
             dark_background (bool, optional): Use dark background. Defaults to True.
+            flip (bool, optional): Flip the image. Defaults to False.
         """
         self.wavelengths = wavelengths
         self.normalize = normalize
@@ -34,6 +36,7 @@ class AbsorptionLinePlotter:
         self.dpi = dpi
         self.margin = margin
         self.dark_background = dark_background
+        self.flip = flip
 
     def __call__(self, flux: np.ndarray) -> np.ndarray:
 
@@ -70,6 +73,9 @@ class AbsorptionLinePlotter:
         canvas.draw_idle()
         data = np.frombuffer(canvas.tostring_argb(), dtype="uint8")
         data = data.reshape(*reversed(canvas.get_width_height()), 4)[:, :, 1:4]
+
+        if self.flip:
+            data = np.fliplr(data)
 
         plt.style.use("default")
         plt.close(fig)
