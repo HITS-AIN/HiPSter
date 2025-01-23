@@ -1,0 +1,120 @@
+from typing import Callable
+
+import pyarrow.dataset as ds
+
+
+class CatalogGenerator:
+
+    def __init__(
+        self,
+        encoder: Callable,
+        data_directory: str,
+        catalog_file: str = "catalog.csv",
+    ):
+        """Generates a catalog of data.
+
+        Args:
+            encoder (callable): Function that encodes the data.
+            data_directory (str): The directory containing the data.
+            catalog_file (str, optional): The name of the catalog file. Defaults to "catalog.csv".
+        """
+
+        self.encoder = encoder
+        self.data_directory = data_directory
+        self.catalog_file = catalog_file
+
+    def __call__(self):
+
+        dataset = ds.dataset(self.data_directory)
+        table = dataset.to_table()
+
+    #     with open(self.catalog_file, "w", encoding="utf-8") as output:
+    #         output.write(
+    #             "#preview,simulation,snapshot data,subhalo id,subhalo data,RMSE,id,RA2000,DEC2000,rotation,x,y,z\n"
+    #         )
+
+    #         for batch, metadata in tqdm(self.dataloader_processing):
+    #             _, rotations, coordinates, losses = model.find_best_rotation(batch)
+
+    #             rotations = rotations.cpu().detach().numpy()
+    #             coordinates = coordinates.cpu().detach().numpy()
+    #             losses = losses.cpu().detach().numpy()
+    #             angles = numpy.array(healpy.vec2ang(coordinates)) * 180.0 / math.pi
+    #             angles = angles.T
+
+    #             for i in range(len(batch)):
+    #                 output.write("<a href='" + hipster_url + "/" + title + "/jpg/")
+    #                 output.write(str(metadata["simulation"][i]) + "/")
+    #                 output.write(str(metadata["snapshot"][i]) + "/")
+    #                 output.write(
+    #                     str(metadata["subhalo_id"][i]) + ".jpg' target='_blank'>"
+    #                 )
+    #                 output.write(
+    #                     "<img src='" + hipster_url + "/" + title + "/thumbnails/"
+    #                 )
+    #                 output.write(str(metadata["simulation"][i]) + "/")
+    #                 output.write(str(metadata["snapshot"][i]) + "/")
+    #                 output.write(str(metadata["subhalo_id"][i]) + ".jpg'></a>,")
+
+    #                 output.write(str(metadata["simulation"][i]) + ",")
+    #                 output.write(str(metadata["snapshot"][i]) + ",")
+    #                 output.write(str(metadata["subhalo_id"][i]) + ",")
+    #                 output.write("<a href='" + self.project_url + "/api/")
+    #                 output.write(str(metadata["simulation"][i]) + "-1/snapshots/")
+    #                 output.write(str(metadata["snapshot"][i]) + "/subhalos/")
+    #                 output.write(str(metadata["subhalo_id"][i]) + "/")
+    #                 output.write("' target='_blank'>" + self.project_url + "</a>,")
+    #                 output.write(str(losses[i]) + ",")
+    #                 output.write(str(metadata["id"][i]) + ",")
+    #                 output.write(str(angles[i, 1]) + ",")
+    #                 output.write(str(90.0 - angles[i, 0]) + ",")
+    #                 output.write(str(rotations[i]) + ",")
+    #                 output.write(str(coordinates[i, 0]) + ",")
+    #                 output.write(str(coordinates[i, 1]) + ",")
+    #                 output.write(str(coordinates[i, 2]) + "\n")
+
+    # def create_images(self, output_path: Path):
+    #     """Writes preview images to disk.
+
+    #     Args:
+    #         output_path (Path): The path to the output directory.
+    #     """
+    #     self.setup("images")
+
+    #     for batch, metadata in self.dataloader_images:
+    #         for i, image in enumerate(batch):
+    #             image = torch.swapaxes(image, 0, 2)
+    #             image = Image.fromarray(
+    #                 (numpy.clip(image.numpy(), 0, 1) * 255).astype(numpy.uint8),
+    #                 mode="RGB",
+    #             )
+    #             filepath = output_path / Path(
+    #                 metadata["simulation"][i],
+    #                 metadata["snapshot"][i],
+    #             )
+    #             filepath.mkdir(parents=True, exist_ok=True)
+    #             filename = filepath / Path(metadata["subhalo_id"][i] + ".jpg")
+    #             image.save(filename)
+
+    # def create_thumbnails(self, output_path: Path):
+    #     """Writes preview images to disk.
+
+    #     Args:
+    #         output_path (Path): The path to the output directory.
+    #     """
+    #     self.setup("thumbnail_images")
+
+    #     for batch, metadata in self.dataloader_thumbnail_images:
+    #         for i, image in enumerate(batch):
+    #             image = torch.swapaxes(image, 0, 2)
+    #             image = Image.fromarray(
+    #                 (numpy.clip(image.numpy(), 0, 1) * 255).astype(numpy.uint8),
+    #                 mode="RGB",
+    #             )
+    #             filepath = output_path / Path(
+    #                 metadata["simulation"][i],
+    #                 metadata["snapshot"][i],
+    #             )
+    #             filepath.mkdir(parents=True, exist_ok=True)
+    #             filename = filepath / Path(metadata["subhalo_id"][i] + ".jpg")
+    #             image.save(filename)

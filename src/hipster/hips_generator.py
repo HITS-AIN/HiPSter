@@ -1,6 +1,7 @@
 import math
 import multiprocessing as mp
 import os
+from typing import Callable
 
 import healpy
 import numpy as np
@@ -13,8 +14,8 @@ class HiPSGenerator:
 
     def __init__(
         self,
-        reconstruction: callable,
-        image_maker: callable,
+        reconstruction: Callable,
+        image_maker: Callable,
         hierarchy: int = 1,
         output_folder: str = "output",
         number_of_workers: int = 1,
