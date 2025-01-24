@@ -8,7 +8,7 @@ from hipster import HiPSGenerator, Inference, SpectrumPlotter
 def test_hips_generator(tmp_path, hierarchy):
 
     hips_generator = HiPSGenerator(
-        reconstruction=Inference("tests/models/vae_decoder.onnx"),
+        decoder=Inference("tests/models/vae_decoder.onnx"),
         image_maker=SpectrumPlotter(
             np.arange(336, 1023, 2),
             ylim=(0, 1),

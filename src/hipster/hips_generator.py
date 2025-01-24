@@ -14,7 +14,7 @@ class HiPSGenerator:
 
     def __init__(
         self,
-        reconstruction: Callable,
+        decoder: Callable,
         image_maker: Callable,
         hierarchy: int = 1,
         output_folder: str = "output",
@@ -24,14 +24,14 @@ class HiPSGenerator:
         https://www.ivoa.net/documents/HiPS/20170519/REC-HIPS-1.0-20170519.pdf
 
         Args:
-            reconstruction (callable): Function that reconstructs the data.
+            decoder(callable): Function that reconstructs the data.
             image_maker (callable): Function that generates the image.
             hierarchy (int, optional): Hierarchy of the HiPS tiling. Defaults to 1.
             output_folder (str, optional): Output folder. Defaults to "output".
             number_of_workers (int, optional): Number of workers. Defaults to 1.
         """
 
-        self.reconstruction = reconstruction
+        self.decoder = decoder
         self.image_maker = image_maker
         self.hierarchy = hierarchy
         self.output_folder = output_folder
@@ -48,7 +48,7 @@ class HiPSGenerator:
                 vectors[sub] = healpy.pix2vec(
                     2**i * self.hierarchy, j * self.hierarchy**2 + sub, nest=True
                 )
-            recon = self.reconstruction(vectors)
+            recon = self.decoder(vectors)
             image = self.generate_tile(recon, i, j, self.hierarchy, 0)
             image = Image.fromarray(image)
             image.save(

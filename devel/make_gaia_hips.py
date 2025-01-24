@@ -68,7 +68,7 @@ def main() -> int:
         raise ValueError("Image type must be 'spectrum' or 'absorption_line'.")
 
     hips_generator = HiPSGenerator(
-        reconstruction=Inference(args.decoder),
+        decoder=Inference(args.decoder),
         image_maker=image_maker,
         output_folder=args.output_folder,
         hierarchy=args.hierarchy,
