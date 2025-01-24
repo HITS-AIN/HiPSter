@@ -76,6 +76,8 @@ def main() -> int:
 
     hips_generator(max_order=args.max_order)
 
+    return 0
+
 
 if __name__ == "__main__":
     sys.exit(main())
