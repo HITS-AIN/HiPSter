@@ -1,5 +1,7 @@
 from typing import Callable
 
+import pandas as pd
+import pyarrow as pa
 import pyarrow.dataset as ds
 
 
@@ -9,24 +11,31 @@ class CatalogGenerator:
         self,
         encoder: Callable,
         data_directory: str,
-        catalog_file: str = "catalog.csv",
     ):
         """Generates a catalog of data.
 
         Args:
             encoder (callable): Function that encodes the data.
             data_directory (str): The directory containing the data.
-            catalog_file (str, optional): The name of the catalog file. Defaults to "catalog.csv".
         """
 
         self.encoder = encoder
         self.data_directory = data_directory
-        self.catalog_file = catalog_file
 
-    def __call__(self):
+    def __call__(self) -> pd.DataFrame:
 
-        dataset = ds.dataset(self.data_directory)
-        table = dataset.to_table()
+        data = {
+            "source_id": [],
+            "latent_position": [],
+        }
+        for batch in ds.dataset(self.data_directory).to_batches(batch_size=2):
+            flux = batch["flux"].flatten().to_numpy().reshape(-1, 1, 344)
+            latent_position = self.encoder(flux)
+            data["source_id"].extend(batch["source_id"].to_pylist())
+            data["latent_position"].extend(latent_position)
+
+        table = pa.table(data)
+        return table.to_pandas()
 
     #     with open(self.catalog_file, "w", encoding="utf-8") as output:
     #         output.write(
