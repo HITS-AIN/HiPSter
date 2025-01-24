@@ -1,38 +1,62 @@
-from typing import Callable
+import math
 
+import healpy
+import numpy as np
 import pandas as pd
 import pyarrow as pa
 import pyarrow.dataset as ds
+
+from .inference import Inference
 
 
 class CatalogGenerator:
 
     def __init__(
         self,
-        encoder: Callable,
+        encoder: Inference,
         data_directory: str,
+        batch_size: int = 256,
     ):
         """Generates a catalog of data.
 
         Args:
             encoder (callable): Function that encodes the data.
             data_directory (str): The directory containing the data.
+            batch_size (int, optional): The batch size to use. Defaults to 256.
         """
 
         self.encoder = encoder
         self.data_directory = data_directory
+        self.batch_size = batch_size
 
     def __call__(self) -> pd.DataFrame:
 
         data = {
             "source_id": [],
             "latent_position": [],
+            "RA2000": [],
+            "DEC2000": [],
         }
-        for batch in ds.dataset(self.data_directory).to_batches(batch_size=2):
-            flux = batch["flux"].flatten().to_numpy().reshape(-1, 1, 344)
+        dataset = ds.dataset(self.data_directory, format="parquet")
+
+        # Reshape the data if the shape is stored in the metadata.
+        metadata_shape = b"flux_shape"
+        if dataset.schema.metadata and metadata_shape in dataset.schema.metadata:
+            shape_string = dataset.schema.metadata[metadata_shape].decode("utf8")
+            shape = shape_string.replace("(", "").replace(")", "").split(",")
+            shape = tuple(map(int, shape))
+
+        for batch in dataset.to_batches(batch_size=self.batch_size):
+            flux = batch["flux"].flatten().to_numpy().reshape(-1, *shape)
             latent_position = self.encoder(flux)
+
+            angles = np.array(healpy.vec2ang(latent_position)) * 180.0 / math.pi
+            angles = angles.T
+
             data["source_id"].extend(batch["source_id"].to_pylist())
             data["latent_position"].extend(latent_position)
+            data["RA2000"].extend(angles[:, 1])
+            data["DEC2000"].extend(90.0 - angles[:, 0])
 
         table = pa.table(data)
         return table.to_pandas()
