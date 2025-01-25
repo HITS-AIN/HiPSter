@@ -70,17 +70,14 @@ class HiPSGenerator:
         Args:
             max_order (int): Maximum order of the HiPS tiling.
         """
-        pathlib.Path(self.output_folder).mkdir(parents=True, exist_ok=True)
+        path1 = pathlib.Path(self.output_folder)
+        path1.mkdir(parents=True, exist_ok=True)
         for i in range(max_order + 1):
-            os.mkdir(os.path.join(self.output_folder, "Norder" + str(i)))
+            path2 = path1 / f"Norder{i}"
+            path2.mkdir(parents=True, exist_ok=True)
             for j in range(int(math.floor(12 * 4**i / 10000)) + 1):
-                os.mkdir(
-                    os.path.join(
-                        self.output_folder,
-                        "Norder" + str(i),
-                        "Dir" + str(j * 10000),
-                    )
-                )
+                path3 = path2 / f"Dir{j * 10000}"
+                path3.mkdir(parents=True, exist_ok=True)
 
     def generate_tile(self, data, order, pixel, hierarchy, index):
         """Construct the hierarchical tiling of the HiPS."""
