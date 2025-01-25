@@ -1,6 +1,7 @@
 import math
 import multiprocessing as mp
 import os
+import pathlib
 from typing import Callable
 
 import healpy
@@ -69,8 +70,7 @@ class HiPSGenerator:
         Args:
             max_order (int): Maximum order of the HiPS tiling.
         """
-        if not os.path.exists(self.output_folder):
-            os.mkdir(self.output_folder)
+        pathlib.Path(self.output_folder).mkdir(parents=True, exist_ok=True)
         for i in range(max_order + 1):
             os.mkdir(os.path.join(self.output_folder, "Norder" + str(i)))
             for j in range(int(math.floor(12 * 4**i / 10000)) + 1):
