@@ -48,6 +48,13 @@ class CatalogGenerator:
 
         for batch in dataset.to_batches(batch_size=self.batch_size):
             flux = batch["flux"].flatten().to_numpy().reshape(-1, *shape)
+
+            # Normalize the flux.
+            # flux is read-only, so we need to create a copy.
+            flux = flux.copy()
+            for i, x in enumerate(flux):
+                flux[i] = (x - x.min()) / (x.max() - x.min())
+
             latent_position = self.encoder(flux)
 
             angles = np.array(healpy.vec2ang(latent_position)) * 180.0 / math.pi
