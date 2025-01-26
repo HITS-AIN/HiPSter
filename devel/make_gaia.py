@@ -25,8 +25,8 @@ def main() -> int:
     encoder = "tests/models/vae_encoder.onnx"
     decoder = "tests/models/vae_decoder.onnx"
     data_directory = "tests/data/XpSampledMeanSpectrum"
-    output_folder = "./HiPSter/gaia"
-    hips_tile_size = 256
+    output_folder = "./HiPSter/gaia/h4"
+    hips_tile_size = 128
     hierarchy = 4
     max_order = 4
 
@@ -56,7 +56,7 @@ def main() -> int:
         hips_generator = HiPSGenerator(
             decoder=Inference(decoder),
             image_maker=absorption_line_plotter,
-            output_folder=output_folder + "/model_absorption_lines",
+            output_folder=output_folder + "/model_absorption_line",
             hierarchy=hierarchy,
         )
         hips_generator(max_order=max_order)

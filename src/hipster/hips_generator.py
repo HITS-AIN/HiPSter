@@ -8,6 +8,8 @@ import healpy
 import numpy as np
 from PIL import Image
 
+from .inference import Inference
+
 # from tqdm.contrib.concurrent import process_map
 
 
@@ -15,7 +17,7 @@ class HiPSGenerator:
 
     def __init__(
         self,
-        decoder: Callable,
+        decoder: Inference,
         image_maker: Callable,
         hierarchy: int = 1,
         output_folder: str = "output",
@@ -25,7 +27,7 @@ class HiPSGenerator:
         https://www.ivoa.net/documents/HiPS/20170519/REC-HIPS-1.0-20170519.pdf
 
         Args:
-            decoder(callable): Function that reconstructs the data.
+            decoder(Inference): Function that reconstructs the data.
             image_maker (callable): Function that generates the image.
             hierarchy (int, optional): Hierarchy of the HiPS tiling. Defaults to 1.
             output_folder (str, optional): Output folder. Defaults to "output".
