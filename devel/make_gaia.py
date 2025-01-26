@@ -10,6 +10,7 @@ from hipster import (
     AbsorptionLinePlotter,
     CatalogGenerator,
     HiPSGenerator,
+    ImageGenerator,
     Inference,
     SpectrumPlotter,
 )
@@ -18,14 +19,17 @@ from hipster import (
 def main() -> int:
 
     tasks = [
-        "spectrum",
-        "absorption_line",
+        # "spectrum",
+        # "absorption_line",
         "catalog",
+        # "images",
     ]
+    url = "http://localhost:8083"
+    title = "gaia"
     encoder = "tests/models/vae_encoder.onnx"
     decoder = "tests/models/vae_decoder.onnx"
     data_directory = "tests/data/XpSampledMeanSpectrum"
-    output_folder = "./HiPSter/gaia/h4"
+    output_folder = "./HiPSter/" + title
     hips_tile_size = 128
     hierarchy = 4
     max_order = 4
@@ -65,10 +69,20 @@ def main() -> int:
         catalog_generator = CatalogGenerator(
             encoder=Inference(encoder),
             data_directory=data_directory,
+            url=url,
+            title=title,
         )
         catalog = catalog_generator()
         table = Table.from_pandas(catalog)
         writeto(table, output_folder + "/catalog.vot")
+
+    if "images" in tasks:
+        ImageGenerator(
+            encoder=Inference(encoder),
+            decoder=Inference(decoder),
+            data_directory=data_directory,
+            output_folder=output_folder + "/images",
+        )()
 
     return 0
 

@@ -15,6 +15,8 @@ class CatalogGenerator:
         self,
         encoder: Inference,
         data_directory: str,
+        url: str,
+        title: str,
         batch_size: int = 256,
     ):
         """Generates a catalog of data.
@@ -22,16 +24,21 @@ class CatalogGenerator:
         Args:
             encoder (callable): Function that encodes the data.
             data_directory (str): The directory containing the data.
+            url (str): The URL of the HiPS server.
+            title (str): The title of the HiPS.
             batch_size (int, optional): The batch size to use. Defaults to 256.
         """
 
         self.encoder = encoder
         self.data_directory = data_directory
+        self.url = url
+        self.title = title
         self.batch_size = batch_size
 
     def __call__(self) -> pd.DataFrame:
 
         data = {
+            "preview": [],
             "source_id": [],
             "latent_position": [],
             "RA2000": [],
@@ -60,6 +67,23 @@ class CatalogGenerator:
             angles = np.array(healpy.vec2ang(latent_position)) * 180.0 / math.pi
             angles = angles.T
 
+            for source_id in batch["source_id"]:
+                data["preview"].append(
+                    "<a href='"
+                    + self.url
+                    + "/"
+                    + self.title
+                    + "/images/"
+                    + str(source_id)
+                    + ".jpg' target='_blank'>"
+                    "<img src='"
+                    + self.url
+                    + "/"
+                    + self.title
+                    + "/thumbnails/"
+                    + str(source_id)
+                    + ".jpg'></a>,"
+                )
             data["source_id"].extend(batch["source_id"].to_pylist())
             data["latent_position"].extend(latent_position)
             data["RA2000"].extend(angles[:, 1])
