@@ -70,8 +70,8 @@ class ImageGenerator:
 
             for idx, (f, r) in enumerate(zip(flux, recon)):
                 plt.figure(figsize=self.figsize, dpi=self.dpi)
-                plt.plot(f[0], label=f"Original")
-                plt.plot(r[0], label=f"Reconstructed")
+                plt.plot(f[0], label="Original")
+                plt.plot(r[0], label="Reconstructed")
                 if self.legend:
                     plt.legend(loc="upper right")
                 plt.savefig(f"{self.output_folder}/{batch["source_id"][idx]}.jpg")
