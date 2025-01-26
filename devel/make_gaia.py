@@ -21,8 +21,9 @@ def main() -> int:
     tasks = [
         # "spectrum",
         # "absorption_line",
-        "catalog",
+        # "catalog",
         # "images",
+        "thumbnails",
     ]
     url = "http://localhost:8083"
     title = "gaia"
@@ -82,6 +83,16 @@ def main() -> int:
             decoder=Inference(decoder),
             data_directory=data_directory,
             output_folder=output_folder + "/images",
+        )()
+
+    if "thumbnails" in tasks:
+        ImageGenerator(
+            encoder=Inference(encoder),
+            decoder=Inference(decoder),
+            data_directory=data_directory,
+            output_folder=output_folder + "/thumbnails",
+            figsize_in_pixel=(120, 90),
+            legend=False,
         )()
 
     return 0

@@ -17,6 +17,7 @@ class ImageGenerator:
         batch_size: int = 256,
         figsize_in_pixel: tuple[int, int] = (1600, 1200),
         dpi: int = 200,
+        legend: bool = True,
     ):
         """Generates images of data.
 
@@ -26,7 +27,10 @@ class ImageGenerator:
             data_directory (str): The directory containing the data.
             output_folder (str, optional): The output folder. Defaults to "output".
             batch_size (int, optional): The batch size to use. Defaults to 256.
-            figsize_in_pixel (tuple[int, int], optional): Size of the figure in pixels (w, h). Defaults to (800, 600).
+            figsize_in_pixel (tuple[int, int], optional): Size of the figure in pixels (w, h).
+            Defaults to (800, 600).
+            dpi (int, optional): Dots per inch. Defaults to 200.
+            legend (bool, optional): Whether to show the legend. Defaults to True.
         """
 
         self.encoder = encoder
@@ -39,6 +43,7 @@ class ImageGenerator:
             float(figsize_in_pixel[1]) / dpi,
         )
         self.dpi = dpi
+        self.legend = legend
 
     def __call__(self):
         pathlib.Path(self.output_folder).mkdir(parents=True, exist_ok=True)
@@ -67,6 +72,7 @@ class ImageGenerator:
                 plt.figure(figsize=self.figsize, dpi=self.dpi)
                 plt.plot(f[0], label=f"Original")
                 plt.plot(r[0], label=f"Reconstructed")
-                plt.legend(loc="upper right")
+                if self.legend:
+                    plt.legend(loc="upper right")
                 plt.savefig(f"{self.output_folder}/{batch["source_id"][idx]}.jpg")
                 plt.close()
