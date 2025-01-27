@@ -19,17 +19,17 @@ from hipster import (
 def main() -> int:
 
     tasks = [
-        # "spectrum",
-        # "absorption_line",
-        # "catalog",
-        # "images",
+        "spectrum",
+        "absorption_line",
+        "catalog",
+        "images",
         "thumbnails",
     ]
     url = "http://localhost:8083"
     title = "gaia"
     encoder = "tests/models/vae_encoder.onnx"
     decoder = "tests/models/vae_decoder.onnx"
-    data_directory = "tests/data/XpSampledMeanSpectrum"
+    data_directory = "/home/doserbd/data/gaia/xp_sampled_mean_spectrum/parquet"
     output_folder = "./HiPSter/" + title
     hips_tile_size = 128
     hierarchy = 4
