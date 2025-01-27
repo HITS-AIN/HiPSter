@@ -15,8 +15,8 @@ class CatalogGenerator:
         self,
         encoder: Inference,
         data_directory: str,
-        url: str,
-        title: str,
+        url: str = "http://localhost:8083",
+        title: str = "title",
         batch_size: int = 256,
     ):
         """Generates a catalog of data.
@@ -24,8 +24,8 @@ class CatalogGenerator:
         Args:
             encoder (callable): Function that encodes the data.
             data_directory (str): The directory containing the data.
-            url (str): The URL of the HiPS server.
-            title (str): The title of the HiPS.
+            url (str): The URL of the HiPS server. Defaults to "http://localhost:8083".
+            title (str): The title of the HiPS. Defaults to "title".
             batch_size (int, optional): The batch size to use. Defaults to 256.
         """
 
