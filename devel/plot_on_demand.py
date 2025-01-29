@@ -20,7 +20,7 @@ class PlotRequestHandler(BaseHTTPRequestHandler):
                 [index], sampling=np.arange(336, 1021, 2), save_file=False
             )
         except ValueError:
-            return f"""<html><body><h1>Error: No continuous raw data found for the given sources.</h1></body></html>"""
+            return """<html><body><h1>Error: No continuous raw data found for the given sources.</h1></body></html>"""
 
         reconstruction = calibrated_spectrum.copy()
         plt.figure(figsize=self.figsize, dpi=self.dpi)
