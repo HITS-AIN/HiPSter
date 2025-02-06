@@ -5,6 +5,7 @@ from io import BytesIO
 
 import matplotlib.pyplot as plt
 import numpy as np
+import onnxruntime as ort
 from gaiaxpy import calibrate
 
 
@@ -18,6 +19,8 @@ class PlotRequestHandler(BaseHTTPRequestHandler):
             float(figsize_in_pixel[1]) / self.dpi,
         )
         self.legend = True
+        self.encoder = ort.InferenceSession("./gaia-v1/encoder.onnx")
+        self.decoder = ort.InferenceSession("./gaia-v1/decoder.onnx")
         super().__init__(*args, **kwargs)
 
     def __generate_plot(self, index) -> str:
@@ -26,12 +29,25 @@ class PlotRequestHandler(BaseHTTPRequestHandler):
                 [index], sampling=np.arange(336, 1021, 2), save_file=False
             )
         except ValueError:
-            return """<html><body><h1>Error: No continuous raw data found for the given sources.</h1></body></html>"""
+            return f"""<html><body><h1>Error: No continuous raw data found for the given
+                   source index {index}.</h1></body></html>"""
 
-        loss = 0.42
+        # Add dummy entry to the end of the flux and flux_error columns to make it divisible by 4
+        calibrated_spectrum["flux"] = calibrated_spectrum["flux"].apply(
+            lambda x: np.append(x, x[-1])
+        )
+
+        flux = calibrated_spectrum["flux"][0].astype(np.float32).reshape(-1, 1, 344)
+        for i, x in enumerate(flux):
+            flux[i] = (x - x.min()) / (x.max() - x.min())
+
+        latent_position = self.encoder.run(None, {"l_x_": flux})[0]
+        recon = self.decoder.run(None, {"l_x_": latent_position})[0]
+        loss = np.mean((flux - recon) ** 2)
+
         plt.figure(figsize=self.figsize, dpi=self.dpi)
-        plt.plot(calibrated_spectrum["flux"][0], label="Original")
-        # plt.plot(reconstruction[0], label="Reconstructed")
+        plt.plot(flux[0][0], label="Original")
+        plt.plot(recon[0][0], label="Reconstructed")
         if self.legend:
             plt.legend(loc="upper right")
         with BytesIO() as buf:
@@ -40,7 +56,7 @@ class PlotRequestHandler(BaseHTTPRequestHandler):
             img_base64 = base64.b64encode(buf.read()).decode()
         plt.close()
         return (
-            f"""<html><body><h1>Plot for {index}</h1>"""
+            f"""<html><body><h1>Plot for Gaia XP source {index}</h1>"""
             f"""<p>Loss: {loss}</p>"""
             f"""<img src="data:image/jpg;base64,{img_base64}" /></body></html>"""
         )

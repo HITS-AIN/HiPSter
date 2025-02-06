@@ -9,7 +9,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY plot_on_demand.py ./
 
 # Download the trained gaia model
-ADD https://space.h-its.org/models/gaia-v1/ ./
+ADD https://space.h-its.org/models/gaia-v1/encoder.onnx ./gaia-v1/
+ADD https://space.h-its.org/models/gaia-v1/decoder.onnx ./gaia-v1/
 
 EXPOSE 8080
 
