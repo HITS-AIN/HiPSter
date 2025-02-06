@@ -45,22 +45,30 @@ class ImageGenerator:
         self.dpi = dpi
         self.legend = legend
 
-    def __call__(self):
         pathlib.Path(self.output_folder).mkdir(parents=True, exist_ok=True)
-        dataset = ds.dataset(self.data_directory, format="parquet")
+        self.dataset = ds.dataset(self.data_directory, format="parquet")
 
         # Reshape the data if the shape is stored in the metadata.
         metadata_shape = b"flux_shape"
-        if dataset.schema.metadata and metadata_shape in dataset.schema.metadata:
-            shape_string = dataset.schema.metadata[metadata_shape].decode("utf8")
+        self.shape = None
+        if (
+            self.dataset.schema.metadata
+            and metadata_shape in self.dataset.schema.metadata
+        ):
+            shape_string = self.dataset.schema.metadata[metadata_shape].decode("utf8")
             shape = shape_string.replace("(", "").replace(")", "").split(",")
-            shape = tuple(map(int, shape))
+            self.shape = tuple(map(int, shape))
 
-        for batch in dataset.to_batches(batch_size=self.batch_size):
-            flux = batch["flux"].flatten().to_numpy().reshape(-1, *shape)
+    def __call__(self):
 
-            # Normalize the flux.
-            # flux is read-only, so we need to create a copy.
+        for batch in self.dataset.to_batches(batch_size=self.batch_size):
+            flux = batch["flux"].flatten().to_numpy()
+            if self.shape:
+                flux = flux.reshape(-1, *self.shape)
+
+            # Normalize
+            # norm = lambda x: (x - x.min()) / (x.max() - x.min())
+            # norm(flux)
             flux = flux.copy()
             for i, x in enumerate(flux):
                 flux[i] = (x - x.min()) / (x.max() - x.min())
