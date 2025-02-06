@@ -82,5 +82,5 @@ class ImageGenerator:
                 plt.plot(r[0], label="Reconstructed")
                 if self.legend:
                     plt.legend(loc="upper right")
-                plt.savefig(f"{self.output_folder}/{batch["source_id"][idx]}.jpg")
+                plt.savefig(f"{self.output_folder}/{batch['source_id'][idx]}.jpg")
                 plt.close()
