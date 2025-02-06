@@ -1,5 +1,7 @@
+import base64
 import urllib.parse
 from http.server import BaseHTTPRequestHandler, HTTPServer
+from io import BytesIO
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -9,8 +11,12 @@ from gaiaxpy import calibrate
 class PlotRequestHandler(BaseHTTPRequestHandler):
 
     def __init__(self, *args, **kwargs):
-        self.figsize = (1600, 1200)
+        figsize_in_pixel = (1600, 1200)
         self.dpi = 200
+        self.figsize = (
+            float(figsize_in_pixel[0]) / self.dpi,
+            float(figsize_in_pixel[1]) / self.dpi,
+        )
         self.legend = True
         super().__init__(*args, **kwargs)
 
@@ -22,15 +28,22 @@ class PlotRequestHandler(BaseHTTPRequestHandler):
         except ValueError:
             return """<html><body><h1>Error: No continuous raw data found for the given sources.</h1></body></html>"""
 
-        reconstruction = calibrated_spectrum.copy()
+        loss = 0.42
         plt.figure(figsize=self.figsize, dpi=self.dpi)
-        plt.plot(calibrated_spectrum[0], label="Original")
-        plt.plot(reconstruction[0], label="Reconstructed")
+        plt.plot(calibrated_spectrum["flux"][0], label="Original")
+        # plt.plot(reconstruction[0], label="Reconstructed")
         if self.legend:
             plt.legend(loc="upper right")
-        plt.savefig("plot.png")
+        with BytesIO() as buf:
+            plt.savefig(buf, format="jpg")
+            buf.seek(0)
+            img_base64 = base64.b64encode(buf.read()).decode()
         plt.close()
-        return f"""<html><body><h1>Plot for {index}</h1><img src="plot.png" /></body></html>"""
+        return (
+            f"""<html><body><h1>Plot for {index}</h1>"""
+            f"""<p>Loss: {loss}</p>"""
+            f"""<img src="data:image/jpg;base64,{img_base64}" /></body></html>"""
+        )
 
     def do_GET(self):
         args = urllib.parse.parse_qs(self.path[2:])
