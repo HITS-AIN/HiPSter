@@ -12,5 +12,5 @@ class Inference:
     ):
         self.model = ort.InferenceSession(os.fspath(model_path))
 
-    def __call__(self, point: np.ndarray) -> np.ndarray:
-        return self.model.run(None, {"l_x_": point})[0]
+    def __call__(self, data: np.ndarray) -> np.ndarray:
+        return self.model.run(None, {"l_x_": data})[0]

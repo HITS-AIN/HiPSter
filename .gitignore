@@ -1,6 +1,7 @@
 __pycache__
 .venv*/
 *.ckpt
+*.onnx
 *.parquet
 *.vot
 dist/
