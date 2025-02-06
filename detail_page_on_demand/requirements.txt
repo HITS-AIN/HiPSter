@@ -1,0 +1,2 @@
+onnxruntime==1.20.1
+gaiaxpy==2.1.2
