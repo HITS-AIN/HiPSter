@@ -22,7 +22,7 @@ include = [
 hipster = 'hipster.main:main'
 
 [tool.poetry.dependencies]
-astropy = "^7.0.0"
+astropy = "^7.0.1"
 healpy = "^1.18.0"
 matplotlib = "^3.10.0"
 pandas = "^2.2.3"
