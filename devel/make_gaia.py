@@ -19,17 +19,17 @@ from hipster import (
 def main() -> int:
 
     tasks = [
-        "spectrum",
-        "absorption_line",
+        # "spectrum",
+        # "absorption_line",
         "catalog",
         "images",
         "thumbnails",
     ]
     url = "http://localhost:8083"
     title = "gaia"
-    encoder = "tests/models/vae_encoder.onnx"
-    decoder = "tests/models/vae_decoder.onnx"
-    data_directory = "/home/doserbd/data/gaia/xp_sampled_mean_spectrum/parquet"
+    encoder = "/home/doserbd/git/Spherinator/gaia/gaia-calibrated-v0/encoder.onnx"
+    decoder = "/home/doserbd/git/Spherinator/gaia/gaia-calibrated-v0/decoder.onnx"
+    data_directory = "/home/doserbd/data/gaia/xp_calibrated/parquet_subset"
     output_folder = "./HiPSter/" + title
     hips_tile_size = 128
     hierarchy = 4
@@ -37,7 +37,7 @@ def main() -> int:
 
     if "spectrum" in tasks:
         spectrum_plotter = SpectrumPlotter(
-            np.arange(336, 1023, 2),
+            np.arange(336, 1021, 2),
             ylim=(0, 1),
             figsize_in_pixel=hips_tile_size,
             margin=0.02,
@@ -53,7 +53,7 @@ def main() -> int:
 
     if "absorption_line" in tasks:
         absorption_line_plotter = AbsorptionLinePlotter(
-            np.arange(336, 1023, 2),
+            np.arange(336, 1021, 2),
             figsize_in_pixel=hips_tile_size,
             margin=0.02,
             flip=True,

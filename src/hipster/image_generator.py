@@ -66,6 +66,10 @@ class ImageGenerator:
             if self.shape:
                 flux = flux.reshape(-1, *self.shape)
 
+            if flux.shape[0] != 256:
+                print(f"Skipping batch with shape {flux.shape}")
+                continue
+
             # Normalize
             # norm = lambda x: (x - x.min()) / (x.max() - x.min())
             # norm(flux)
