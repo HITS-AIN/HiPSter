@@ -1,9 +1,11 @@
 import numpy as np
+import pytest
 
 from hipster import Inference
 
 
-def test_inference_decoder():
-    rg = Inference("tests/models/vae_decoder.onnx")
+@pytest.mark.parametrize("batch_size", [1, 256])
+def test_inference_decoder(batch_size):
+    rg = Inference("tests/models/vae_decoder.onnx", batch_size=batch_size)
     point = np.array([[1, 0, 0]], dtype=np.float32)
     assert rg(point).shape == (1, 1, 344)
