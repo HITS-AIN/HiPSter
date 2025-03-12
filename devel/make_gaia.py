@@ -22,13 +22,13 @@ def main() -> int:
         # "spectrum",
         # "absorption_line",
         "catalog",
-        "images",
-        "thumbnails",
+        # "images",
+        # "thumbnails",
     ]
     url = "http://localhost:8083"
     title = "gaia"
-    encoder = "/home/doserbd/git/Spherinator/gaia/gaia-calibrated-v0/encoder.onnx"
-    decoder = "/home/doserbd/git/Spherinator/gaia/gaia-calibrated-v0/decoder.onnx"
+    encoder = "/home/doserbd/git/Spherinator/gaia/gaia-calibrated-v1/encoder.onnx"
+    decoder = "/home/doserbd/git/Spherinator/gaia/gaia-calibrated-v1/decoder.onnx"
     data_directory = "/home/doserbd/data/gaia/xp_calibrated/parquet_subset"
     output_folder = "./HiPSter/" + title
     hips_tile_size = 128
@@ -74,9 +74,9 @@ def main() -> int:
             title=title,
         )
         catalog = catalog_generator()
-        table = Table.from_pandas(catalog)
-        writeto(table, output_folder + "/catalog.vot")
-
+        # table = Table.from_pandas(catalog)
+        # writeto(table, output_folder + "/catalog.tsv")
+        catalog.to_csv(output_folder + "/catalog.tsv", sep="\t", index=False)
     if "images" in tasks:
         ImageGenerator(
             encoder=Inference(encoder),
