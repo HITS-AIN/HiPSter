@@ -56,7 +56,7 @@ class CatalogGenerator:
         for batch in dataset.to_batches(batch_size=self.batch_size):
             flux = batch["flux"].flatten().to_numpy().reshape(-1, *shape)
 
-            if flux.shape[0] != 256:
+            if flux.shape[0] != self.batch_size:
                 print(f"Skipping batch with shape {flux.shape}")
                 continue
 
