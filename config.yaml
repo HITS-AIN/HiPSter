@@ -1,0 +1,13 @@
+url: http://localhost:8083
+title: gaia
+hips:
+  decoder:
+    model_path: /home/doserbd/git/Spherinator/gaia/gaia-calibrated-v1/decoder.onnx
+  image_maker:
+    class_path: hipster.SpectrumPlotter
+    init_args:
+      wavelengths:
+        start: 336
+        stop: 1021
+        step: 2
+      flip: True

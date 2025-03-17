@@ -2,6 +2,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 
+from .range import Range
 from .wavelength_to_rgb import wavelength_to_rgb
 
 matplotlib.use("Agg")
@@ -11,7 +12,7 @@ class AbsorptionLinePlotter:
 
     def __init__(
         self,
-        wavelengths: np.ndarray,
+        wavelengths: Range,
         normalize: bool = True,
         figsize_in_pixel: int = 800,
         dpi: int = 96,
@@ -30,7 +31,7 @@ class AbsorptionLinePlotter:
             dark_background (bool, optional): Use dark background. Defaults to True.
             flip (bool, optional): Flip the image. Defaults to False.
         """
-        self.wavelengths = wavelengths
+        self.wavelengths = wavelengths.to_numpy()
         self.normalize = normalize
         self.figsize = figsize_in_pixel / dpi
         self.dpi = dpi

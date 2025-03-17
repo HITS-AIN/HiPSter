@@ -2,6 +2,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 
+from .range import Range
 from .wavelength_to_rgb import wavelength_to_rgb
 
 matplotlib.use("Agg")
@@ -11,7 +12,7 @@ class SpectrumPlotter:
 
     def __init__(
         self,
-        wavelengths: np.ndarray,
+        wavelengths: Range,
         axis: bool = False,
         ylim: tuple | None = None,
         figsize_in_pixel: int = 800,
@@ -23,7 +24,7 @@ class SpectrumPlotter:
         """Plot a spectrum with a spectral colormap in the background.
 
         Args:
-            wavelengths (np.ndarray): Wavelengths of the spectrum.
+            wavelengths (Arange): Wavelengths of the spectrum.
             axis (bool, optional): Print axis labels. Defaults to False.
             ylim (tuple, optional): Y-axis limits. Defaults to (0.0, 1.0).
             figsize_in_pixel (int, optional): Size of the figure in pixels. Defaults to 800.
@@ -32,7 +33,7 @@ class SpectrumPlotter:
             dark_background (bool, optional): Use dark background. Defaults to True.
             flip (bool, optional): Flip the image. Defaults to False.
         """
-        self.wavelengths = wavelengths
+        self.wavelengths = wavelengths.to_numpy()
         self.axis = axis
         self.ylim = ylim
         self.figsize = figsize_in_pixel / dpi
