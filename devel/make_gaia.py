@@ -3,16 +3,14 @@
 import sys
 
 import numpy as np
-from astropy.io.votable import writeto
-from astropy.table import Table
 
 from hipster import (
     AbsorptionLinePlotter,
-    CatalogGenerator,
     HiPSGenerator,
     ImageGenerator,
     Inference,
     SpectrumPlotter,
+    VOTableGenerator,
 )
 
 
@@ -21,7 +19,7 @@ def main() -> int:
     tasks = [
         # "spectrum",
         # "absorption_line",
-        "catalog",
+        "votable",
         # "images",
         # "thumbnails",
     ]
@@ -66,17 +64,15 @@ def main() -> int:
         )
         hips_generator(max_order=max_order)
 
-    if "catalog" in tasks:
-        catalog_generator = CatalogGenerator(
+    if "votable" in tasks:
+        VOTableGenerator(
             encoder=Inference(encoder),
             data_directory=data_directory,
+            output_file=output_folder + "/catalog.vot",
             url=url,
             title=title,
-        )
-        catalog = catalog_generator()
-        # table = Table.from_pandas(catalog)
-        # writeto(table, output_folder + "/catalog.tsv")
-        catalog.to_csv(output_folder + "/catalog.tsv", sep="\t", index=False)
+        )()
+
     if "images" in tasks:
         ImageGenerator(
             encoder=Inference(encoder),

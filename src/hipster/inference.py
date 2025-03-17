@@ -9,15 +9,17 @@ class Inference:
     def __init__(
         self,
         model_path: str | os.PathLike,
+        input_name: str = "x",
         batch_size: int = 256,
     ):
         self.model = ort.InferenceSession(os.fspath(model_path))
+        self.input_name = input_name
         self.batch_size = batch_size
 
     def __call__(self, data: np.ndarray) -> np.ndarray:
         results = []
         for i in range(0, len(data), self.batch_size):
             batch = data[i : i + self.batch_size]
-            results.append(self.model.run(None, {"l_x_": batch})[0])
+            results.append(self.model.run(None, {self.input_name: batch})[0])
         data = np.concatenate(results, axis=0)
         return data
