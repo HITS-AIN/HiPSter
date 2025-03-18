@@ -2,13 +2,12 @@
 
 import sys
 
-import numpy as np
-
 from hipster import (
     AbsorptionLinePlotter,
     HiPSGenerator,
     ImageGenerator,
     Inference,
+    Range,
     SpectrumPlotter,
     VOTableGenerator,
 )
@@ -35,7 +34,7 @@ def main() -> int:
 
     if "spectrum" in tasks:
         spectrum_plotter = SpectrumPlotter(
-            np.arange(336, 1021, 2),
+            Range(336, 1021, 2),
             ylim=(0, 1),
             figsize_in_pixel=hips_tile_size,
             margin=0.02,
@@ -51,7 +50,7 @@ def main() -> int:
 
     if "absorption_line" in tasks:
         absorption_line_plotter = AbsorptionLinePlotter(
-            np.arange(336, 1021, 2),
+            Range(336, 1021, 2),
             figsize_in_pixel=hips_tile_size,
             margin=0.02,
             flip=True,
