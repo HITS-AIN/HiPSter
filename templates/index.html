@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name='description' content='{{ title }}'>
+  <meta charset='utf-8'>
+  <title>{{ title }}</title>
+</head>
+<body>
+    <div id='aladin-lite-div' style='width:500px;height:500px;'></div>
+    <script type='text/javascript' src='https://aladin.u-strasbg.fr/AladinLite/api/v3/latest/aladin.js'charset='utf-8'></script>
+    <script type='text/javascript'>
+        var aladin;
+            A.init.then(() => {
+            aladin = A.aladin('#aladin-lite-div');
+            aladin.removeLayers()
+
+            var model1 = aladin.createImageSurvey('Gaia1', 'Gaia model spectrum', 'http://rh04715.h-its.org:8083/gaia/model_spectrum','equatorial', 4, {imgFormat: 'jpg'});
+            aladin.setImageLayer(model1);
+
+            var catalog1 = A.catalogFromURL('http://rh04715.h-its.org:8083/gaia/catalog.vot', {sourceSize:10, onClick: 'showPopup', color: '#ff00ff', shape: 'circle', name: 'Gaia 1'});
+            aladin.addCatalog(catalog1);
+
+            aladin.setFoV(180.0);
+        });
+    </script>
+</body>
+</html>

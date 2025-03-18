@@ -18,6 +18,8 @@ def main(
         output_folder (str): The folder to save the generated HiPS data.
         tasks (list[Task]): A list of tasks to perform.
     """
+    html = HTMLGenerator(url, title)
+    html.generate()
 
     for task in tasks:
         task.execute()

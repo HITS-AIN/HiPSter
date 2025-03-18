@@ -13,9 +13,9 @@ tasks:
             start: 336
             stop: 1021
             step: 2
+          figsize_in_pixel: 128
           flip: True
       max_order: 2
-      hips_tile_size: 128
       hierarchy: 4
   - class_path: hipster.HiPSGenerator
     init_args:
@@ -28,7 +28,7 @@ tasks:
             start: 336
             stop: 1021
             step: 2
+          figsize_in_pixel: 128
           flip: True
       max_order: 2
-      hips_tile_size: 128
       hierarchy: 4
