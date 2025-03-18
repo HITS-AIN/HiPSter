@@ -9,11 +9,12 @@ import numpy as np
 from PIL import Image
 
 from .inference import Inference
+from .task import Task
 
 # from tqdm.contrib.concurrent import process_map
 
 
-class HiPSGenerator:
+class HiPSGenerator(Task):
 
     def __init__(
         self,
@@ -22,6 +23,7 @@ class HiPSGenerator:
         hierarchy: int = 1,
         output_folder: str = "output",
         number_of_workers: int = 1,
+        max_order: int = 1,
     ):
         """Generates a HiPS tiling following the standard defined in
         https://www.ivoa.net/documents/HiPS/20170519/REC-HIPS-1.0-20170519.pdf
@@ -32,13 +34,15 @@ class HiPSGenerator:
             hierarchy (int, optional): Hierarchy of the HiPS tiling. Defaults to 1.
             output_folder (str, optional): Output folder. Defaults to "output".
             number_of_workers (int, optional): Number of workers. Defaults to 1.
+            max_order (int, optional): Maximum order of the HiPS tiling. Defaults to 1.
         """
-
+        super().__init__("HiPSGenerator")
         self.decoder = decoder
         self.image_maker = image_maker
         self.hierarchy = hierarchy
         self.output_folder = output_folder
         self.number_of_workers = number_of_workers
+        self.max_order = max_order
 
     def __create_hips_tile(
         self,
@@ -103,18 +107,12 @@ class HiPSGenerator:
         result[q1.shape[0] :, q1.shape[1] :] = q4
         return result
 
-    def __call__(
-        self,
-        max_order: int,
-    ):
-        """
-        Args:
-            max_order (int): Maximum order of the HiPS tiling.
-        """
+    def execute(self) -> None:
+        """Generates the HiPS tiles."""
 
-        self.__create_folders(max_order)
+        self.__create_folders(self.max_order)
 
-        for i in range(max_order + 1):
+        for i in range(self.max_order + 1):
             if self.number_of_workers == 1:
                 self.__create_hips_tile(i, range(12 * 4**i))
             else:

@@ -17,4 +17,4 @@ def test_hips_generator(tmp_path, hierarchy):
         hierarchy=hierarchy,
     )
 
-    hips_generator(max_order=1)
+    hips_generator.execute()

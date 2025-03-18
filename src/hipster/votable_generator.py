@@ -9,9 +9,10 @@ from astropy.io.votable import writeto
 from astropy.table import Table
 
 from .inference import Inference
+from .task import Task
 
 
-class VOTableGenerator:
+class VOTableGenerator(Task):
 
     def __init__(
         self,
@@ -32,7 +33,7 @@ class VOTableGenerator:
             title (str): The title of the HiPS. Defaults to "title".
             batch_size (int, optional): The batch size to use. Defaults to 256.
         """
-
+        super().__init__("VOTableGenerator")
         self.encoder = encoder
         self.data_directory = data_directory
         self.output_file = output_file
@@ -102,6 +103,6 @@ class VOTableGenerator:
 
         return pa.table(data).to_pandas()
 
-    def __call__(self) -> None:
+    def execute(self) -> None:
         table = Table.from_pandas(self.get_data())
         writeto(table, self.output_file)

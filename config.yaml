@@ -1,15 +1,34 @@
 url: http://localhost:8083
 title: gaia
-max_order: 2
-hips:
-  decoder:
-    model_path: /home/doserbd/git/Spherinator/gaia/gaia-calibrated-v2/decoder.onnx
-    input_name: x
-  image_maker:
-    class_path: hipster.SpectrumPlotter
+output_folder: HiPSter2
+tasks:
+  - class_path: hipster.HiPSGenerator
     init_args:
-      wavelengths:
-        start: 336
-        stop: 1021
-        step: 2
-      flip: True
+      decoder:
+        model_path: /home/doserbd/git/Spherinator/gaia/gaia-calibrated-v2/decoder.onnx
+      image_maker:
+        class_path: hipster.SpectrumPlotter
+        init_args:
+          wavelengths:
+            start: 336
+            stop: 1021
+            step: 2
+          flip: True
+      max_order: 2
+      hips_tile_size: 128
+      hierarchy: 4
+  - class_path: hipster.HiPSGenerator
+    init_args:
+      decoder:
+        model_path: /home/doserbd/git/Spherinator/gaia/gaia-calibrated-v2/decoder.onnx
+      image_maker:
+        class_path: hipster.AbsorptionLinePlotter
+        init_args:
+          wavelengths:
+            start: 336
+            stop: 1021
+            step: 2
+          flip: True
+      max_order: 2
+      hips_tile_size: 128
+      hierarchy: 4

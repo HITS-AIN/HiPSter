@@ -1,15 +1,13 @@
-from typing import Optional
-
 from jsonargparse import auto_cli
 
-from hipster.hips_generator import HiPSGenerator
+from hipster import HTMLGenerator, Task
 
 
 def main(
     url: str = "http://localhost:8083",
     title: str = "gaia",
-    max_order: int = 4,
-    hips: Optional[HiPSGenerator] = None,
+    output_folder: str = "./HiPSter",
+    tasks: list[Task] = [],
 ):
     """
     Main function to generate HiPS data.
@@ -17,11 +15,12 @@ def main(
     Args:
         url (str): The URL of the HiPS server.
         title (str): The title of the HiPS data.
-        max_order (int): The maximum order of the HiPS tiling.
-        hips (Optional[HiPSGenerator]): An instance of HiPSGenerator.
+        output_folder (str): The folder to save the generated HiPS data.
+        tasks (list[Task]): A list of tasks to perform.
     """
-    if hips is not None:
-        hips(max_order=max_order)
+
+    for task in tasks:
+        task.execute()
 
 
 if __name__ == "__main__":
