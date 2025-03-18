@@ -1,8 +1,10 @@
 url: http://localhost:8083
 title: gaia
+max_order: 2
 hips:
   decoder:
-    model_path: /home/doserbd/git/Spherinator/gaia/gaia-calibrated-v1/decoder.onnx
+    model_path: /home/doserbd/git/Spherinator/gaia/gaia-calibrated-v2/decoder.onnx
+    input_name: x
   image_maker:
     class_path: hipster.SpectrumPlotter
     init_args:
