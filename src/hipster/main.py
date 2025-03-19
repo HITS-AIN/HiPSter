@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from jsonargparse import auto_cli
 
 from hipster import HTMLGenerator, Task
@@ -23,5 +25,12 @@ def main(
     html.generate()
 
 
-if __name__ == "__main__":
+def main_cli():
+    """
+    Command line interface for the main function.
+    """
     auto_cli(main)
+
+
+if __name__ == "__main__":
+    main_cli()

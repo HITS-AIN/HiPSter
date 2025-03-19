@@ -19,7 +19,7 @@ include = [
 ]
 
 [tool.poetry.scripts]
-hipster = 'hipster.main:main'
+hipster = 'hipster.main:main_cli'
 
 [tool.poetry.dependencies]
 astropy = "^7.0"
