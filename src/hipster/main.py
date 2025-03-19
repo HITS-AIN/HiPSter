@@ -4,9 +4,7 @@ from hipster import HTMLGenerator, Task
 
 
 def main(
-    url: str = "http://localhost:8083",
-    title: str = "gaia",
-    output_folder: str = "./HiPSter",
+    html: HTMLGenerator = HTMLGenerator(),
     tasks: list[Task] = [],
 ):
     """
@@ -18,11 +16,11 @@ def main(
         output_folder (str): The folder to save the generated HiPS data.
         tasks (list[Task]): A list of tasks to perform.
     """
-    html = HTMLGenerator(url, title)
-    html.generate()
 
     for task in tasks:
         task.execute()
+
+    html.generate()
 
 
 if __name__ == "__main__":

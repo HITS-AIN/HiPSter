@@ -1,6 +1,7 @@
-url: http://localhost:8083
-title: gaia
-output_folder: HiPSter2
+html:
+  url: http://localhost:8083
+  title: Gaia XP DR3
+  output_folder: HiPSter
 tasks:
   - class_path: hipster.HiPSGenerator
     init_args:
