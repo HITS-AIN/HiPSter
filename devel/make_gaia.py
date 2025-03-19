@@ -45,8 +45,9 @@ def main() -> int:
             image_maker=spectrum_plotter,
             output_folder=output_folder + "/model_spectrum",
             hierarchy=hierarchy,
+            max_order=max_order,
         )
-        hips_generator(max_order=max_order)
+        hips_generator.execute()
 
     if "absorption_line" in tasks:
         absorption_line_plotter = AbsorptionLinePlotter(
@@ -60,8 +61,9 @@ def main() -> int:
             image_maker=absorption_line_plotter,
             output_folder=output_folder + "/model_absorption_line",
             hierarchy=hierarchy,
+            max_order=max_order,
         )
-        hips_generator(max_order=max_order)
+        hips_generator.execute()
 
     if "votable" in tasks:
         VOTableGenerator(
@@ -70,7 +72,7 @@ def main() -> int:
             output_file=output_folder + "/catalog.vot",
             url=url,
             title=title,
-        )()
+        ).execute()
 
     if "images" in tasks:
         ImageGenerator(
