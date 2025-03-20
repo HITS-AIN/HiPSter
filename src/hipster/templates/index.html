@@ -14,11 +14,15 @@
             aladin = A.aladin('#aladin-lite-div');
             aladin.removeLayers()
 
-            var model1 = aladin.createImageSurvey('Gaia1', 'Gaia model spectrum', 'http://rh04715.h-its.org:8083/gaia/model_spectrum','equatorial', 4, {imgFormat: 'jpg'});
-            aladin.setImageLayer(model1);
+            {% for image_layer in image_layers %}
+                var imageLayer = aladin.createImageSurvey('{{ image_layer.name }}', '{{ image_layer.description }}', '{{ image_layer.url }}','equatorial', 4, {imgFormat: 'jpg'});
+                aladin.addImageLayer(imageLayer);
+            {% endfor %}
 
-            var catalog1 = A.catalogFromURL('http://rh04715.h-its.org:8083/gaia/catalog.vot', {sourceSize:10, onClick: 'showPopup', color: '#ff00ff', shape: 'circle', name: 'Gaia 1'});
-            aladin.addCatalog(catalog1);
+            {% for catalog_layer in catalog_layers %}
+                var catalogLayer = A.catalogFromURL('{{ catalog_layer.url }}', {sourceSize:10, onClick: 'showPopup', color: '#ff00ff', shape: 'circle', name: '{{ catalog_layer.name }}'});
+                aladin.addCatalog(catalogLayer);
+            {% endfor %}
 
             aladin.setFoV(180.0);
         });

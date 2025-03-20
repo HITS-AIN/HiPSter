@@ -1,7 +1,7 @@
+output_folder: HiPSter
 html:
   url: http://localhost:8083
-  title: Gaia XP DR3
-  output_folder: HiPSter
+  title: HiPSter representation of Gaia XP DR3
 tasks:
   - class_path: hipster.HiPSGenerator
     init_args:
@@ -16,7 +16,7 @@ tasks:
             step: 2
           figsize_in_pixel: 128
           flip: True
-      max_order: 2
+      max_order: 1
       hierarchy: 4
   - class_path: hipster.HiPSGenerator
     init_args:
@@ -31,5 +31,5 @@ tasks:
             step: 2
           figsize_in_pixel: 128
           flip: True
-      max_order: 2
+      max_order: 1
       hierarchy: 4

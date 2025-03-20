@@ -104,5 +104,6 @@ class VOTableGenerator(Task):
         return pa.table(data).to_pandas()
 
     def execute(self) -> None:
+        print(f"Executing task: {self.name}")
         table = Table.from_pandas(self.get_data())
         writeto(table, self.output_file)

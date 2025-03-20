@@ -9,8 +9,8 @@ class Task(ABC):
         """
         super().__init__()
         self.name = name
+        self.output_folder = None
 
     @abstractmethod
     def execute(self) -> None:
         """Execute the task."""
-        print(f"Executing task: {self.name}")

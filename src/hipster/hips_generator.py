@@ -110,6 +110,7 @@ class HiPSGenerator(Task):
     def execute(self) -> None:
         """Generates the HiPS tiles."""
 
+        print(f"Executing task: {self.name}")
         self.__create_folders(self.max_order)
 
         for i in range(self.max_order + 1):

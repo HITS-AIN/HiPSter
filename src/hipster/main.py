@@ -8,21 +8,24 @@ from hipster import HTMLGenerator, Task
 def main(
     html: HTMLGenerator = HTMLGenerator(),
     tasks: list[Task] = [],
+    output_folder: str = "./HiPSter",
+    project_name: str = "project",
 ):
     """
     Main function to generate HiPS data.
 
     Args:
-        url (str): The URL of the HiPS server.
-        title (str): The title of the HiPS data.
-        output_folder (str): The folder to save the generated HiPS data.
+        html (HTMLGenerator): An instance of HTMLGenerator to create the HTML page.
         tasks (list[Task]): A list of tasks to perform.
+        output_folder (str): The folder to save the generated HiPS data.
+        project_name (str): The name of the project. Default is "project".
     """
 
     for task in tasks:
+        task.output_folder = output_folder
         task.execute()
 
-    html.generate()
+    html.generate(output_folder, project_name)
 
 
 def main_cli():
