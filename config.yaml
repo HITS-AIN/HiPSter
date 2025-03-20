@@ -1,4 +1,5 @@
 output_folder: HiPSter
+project_name: gaia
 html:
   url: http://localhost:8083
   title: HiPSter representation of Gaia XP DR3

@@ -9,7 +9,8 @@ class Task(ABC):
         """
         super().__init__()
         self.name = name
-        self.output_folder = None
+        self.output_folder = ""
+        self.project_name = ""
 
     @abstractmethod
     def execute(self) -> None:

@@ -13,17 +13,14 @@
             A.init.then(() => {
             aladin = A.aladin('#aladin-lite-div');
             aladin.removeLayers()
-
             {% for image_layer in image_layers %}
                 var imageLayer = aladin.createImageSurvey('{{ image_layer.name }}', '{{ image_layer.description }}', '{{ image_layer.url }}','equatorial', 4, {imgFormat: 'jpg'});
                 aladin.addImageLayer(imageLayer);
             {% endfor %}
-
             {% for catalog_layer in catalog_layers %}
                 var catalogLayer = A.catalogFromURL('{{ catalog_layer.url }}', {sourceSize:10, onClick: 'showPopup', color: '#ff00ff', shape: 'circle', name: '{{ catalog_layer.name }}'});
                 aladin.addCatalog(catalogLayer);
             {% endfor %}
-
             aladin.setFoV(180.0);
         });
     </script>
