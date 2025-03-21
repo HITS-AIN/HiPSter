@@ -7,14 +7,14 @@
 </head>
 <body>
     <div id='aladin-lite-div' style='width:500px;height:500px;'></div>
-    <script type='text/javascript' src='https://aladin.u-strasbg.fr/AladinLite/api/v3/latest/aladin.js'charset='utf-8'></script>
+    <script type='text/javascript' src='https://aladin.u-strasbg.fr/AladinLite/api/v3/{{ aladin_lite_version }}/aladin.js'charset='utf-8'></script>
     <script type='text/javascript'>
         var aladin;
             A.init.then(() => {
             aladin = A.aladin('#aladin-lite-div');
             aladin.removeLayers()
             {% for image_layer in image_layers %}
-                var imageLayer = aladin.createImageSurvey('{{ image_layer.name }}', '{{ image_layer.description }}', '{{ image_layer.url }}','equatorial', 4, {imgFormat: 'jpg'});
+                var imageLayer = aladin.createImageSurvey('{{ image_layer.hips_id }}', '{{ image_layer.hips_name }}', '{{ image_layer.hisp_base_url }}','equatorial', '{{ image_layer.hips_max_order }}', {imgFormat: 'jpg'});
                 aladin.addImageLayer(imageLayer);
             {% endfor %}
             {% for catalog_layer in catalog_layers %}

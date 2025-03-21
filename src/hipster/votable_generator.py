@@ -8,6 +8,8 @@ import pyarrow.dataset as ds
 from astropy.io.votable import writeto
 from astropy.table import Table
 
+from hipster.html_generator import HTMLGenerator
+
 from .inference import Inference
 from .task import Task
 
@@ -22,6 +24,7 @@ class VOTableGenerator(Task):
         url: str = "http://localhost:8083",
         title: str = "title",
         batch_size: int = 256,
+        color: str = "red",
     ):
         """Generates a catalog of data.
 
@@ -32,6 +35,7 @@ class VOTableGenerator(Task):
             url (str): The URL of the HiPS server. Defaults to "http://localhost:8083".
             title (str): The title of the HiPS. Defaults to "title".
             batch_size (int, optional): The batch size to use. Defaults to 256.
+            color (str, optional): The color of the catalog. Defaults to "red".
         """
         super().__init__("VOTableGenerator")
         self.encoder = encoder
@@ -40,6 +44,7 @@ class VOTableGenerator(Task):
         self.url = url
         self.title = title
         self.batch_size = batch_size
+        self.color = color
 
     def get_data(self) -> pd.DataFrame:
         """Generates the catalog."""
@@ -107,3 +112,10 @@ class VOTableGenerator(Task):
         print(f"Executing task: {self.name}")
         table = Table.from_pandas(self.get_data())
         writeto(table, self.output_file)
+
+    def register(self, html_generator: HTMLGenerator) -> None:
+        """Register the HiPS generator to the HTML generator."""
+        html_generator.add_votable(
+            url=f"{html_generator.url}/{self.title}",
+            color=self.color,
+        )
