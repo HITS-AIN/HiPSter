@@ -25,7 +25,7 @@ hipster = 'hipster.main:main_cli'
 astropy = "^7.0"
 gaiaxpy = "^2.1.2"
 healpy = "^1.18.0"
-jsonargparse = "^4.37"
+jsonargparse = {extras = ["omegaconf"], version = "^4.37"}
 matplotlib = "^3.10.0"
 onnxruntime-gpu = "^1.21"
 pandas = "^2.2.3"
