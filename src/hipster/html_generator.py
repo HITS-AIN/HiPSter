@@ -1,5 +1,4 @@
 import os
-from calendar import c
 from dataclasses import dataclass
 
 from jinja2 import Environment, FileSystemLoader
