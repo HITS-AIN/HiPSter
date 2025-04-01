@@ -38,23 +38,26 @@ decoder = ort.InferenceSession(os.path.join(model_path, "decoder.onnx"))
 
 latent_position = encoder.run(None, {"x": flux})[0]
 recon = decoder.run(None, {"x": latent_position})[0]
-loss = np.mean((flux - recon) ** 2)
+mse_loss = np.mean((flux - recon) ** 2)
+nll_loss = np.nan
 
-st.write(f"MSE loss: {loss:.8f}")
+st.write(f"MSE loss: {mse_loss:.8f}")
+st.write(f"NLL loss: {nll_loss:.8f}")
 st.write(f"Source index: {source_index}")
 
 fig, ax = plt.subplots()
-ax.plot(sampling, flux[0][0], label="Original")
-ax.plot(sampling, recon[0][0], label="Reconstructed")
+ax.plot(sampling, flux[0][0], label="Original", alpha=0.5, color="orange")
+ax.plot(sampling, recon[0][0], label="Reconstructed", color="blue")
 ax.set_xlabel("Wavelength (nm)")
 ax.set_ylabel("Normalized flux")
+ax.legend()
 
 ax.fill_between(
     sampling,
     flux[0][0] - flux_error[0][0],
     flux[0][0] + flux_error[0][0],
     alpha=0.5,
-    facecolor="#FF9848",
+    facecolor="orange",
 )
 
 st.pyplot(fig)
