@@ -10,6 +10,8 @@ def main(
     tasks: list[Task] = [],
     root_path: str = "./HiPSter",
     only_html: bool = False,
+    verbose: bool = False,
+    overwrite: bool = False,
 ):
     """
     Main function to generate HiPS data.
@@ -19,7 +21,15 @@ def main(
         tasks (list[Task]): A list of tasks to perform.
         root_path (str): The root path for the output folder.
         only_html (bool): If True, only generate the HTML page without executing tasks.
+        verbose (bool): If True, enable verbose output.
+        overwrite (bool): If True, overwrite existing files.
     """
+
+    if verbose:
+        print("Tasks:")
+        for task in tasks:
+            print(f"  - {task.__class__.__name__}")
+
     for task in tasks:
         task.root_path = root_path
         task.register(html)
