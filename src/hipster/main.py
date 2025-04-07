@@ -1,16 +1,11 @@
 #!/usr/bin/env python3
 
-from jsonargparse import auto_cli
+from jsonargparse import ArgumentParser
 
 from hipster import HTMLGenerator, Task
 
 
-def main(
-    html: HTMLGenerator = HTMLGenerator(),
-    tasks: list[Task] = [],
-    root_path: str = "./HiPSter",
-    only_html: bool = False,
-):
+def main():
     """
     Main function to generate HiPS data.
 
@@ -20,21 +15,27 @@ def main(
         root_path (str): The root path for the output folder.
         only_html (bool): If True, only generate the HTML page without executing tasks.
     """
+
+    parser = ArgumentParser(description="Generate HiPS representation.")
+
+    parser.add_class_arguments(HTMLGenerator, "html")
+    parser.add_argument("--tasks", type=list[Task], default=[])
+    parser.add_argument("--root_path", type=str, default="./HiPSter")
+    parser.add_argument("--only_html", type=bool, default=False)
+    parser.add_argument("--config", action="config")
+
+    cfg = parser.parse_args()
+    html = HTMLGenerator(**cfg.html.as_dict())
+    tasks = parser.instantiate_classes(cfg.tasks)
+
     for task in tasks:
-        task.root_path = root_path
+        task.root_path = cfg.root_path
         task.register(html)
-        if not only_html:
+        if not cfg.only_html:
             task.execute()
 
-    html.generate(root_path)
-
-
-def main_cli():
-    """
-    Command line interface for the main function.
-    """
-    auto_cli(main, parser_mode="omegaconf")
+    html.generate(cfg.root_path)
 
 
 if __name__ == "__main__":
-    main_cli()
+    main()
