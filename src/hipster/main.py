@@ -24,20 +24,24 @@ def main():
         "--overwrite", action="store_true", help="Overwrite existing files."
     )
     parser.link_arguments("root_path", "html.root_path")
+    parser.link_arguments("root_path", "tasks.init_args.root_path")
 
     cfg = parser.parse_args()
     cfg = parser.instantiate_classes(cfg)
 
+    # Print list of tasks
     if cfg.verbose:
         print("Tasks:")
         for task in cfg.tasks:
             print(f"  - {task.__class__.__name__}")
 
+    # Execute tasks
     for task in cfg.tasks:
         task.register(cfg.html)
         if not cfg.only_html:
             task.execute()
 
+    # Generate HTML main page
     cfg.html.generate()
 
 
