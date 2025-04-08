@@ -15,7 +15,7 @@
 ## Installation
 
 ```bash
-pip install hipster
+pip install git+https://github.com/HITS-AIN/HiPSter
 ```
 
 ## Documentation
