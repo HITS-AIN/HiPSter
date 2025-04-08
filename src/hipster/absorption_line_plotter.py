@@ -33,6 +33,7 @@ class AbsorptionLinePlotter:
         """
         self.wavelengths = wavelengths.to_numpy()
         self.normalize = normalize
+        self.figsize_in_pixel = figsize_in_pixel
         self.figsize = figsize_in_pixel / dpi
         self.dpi = dpi
         self.margin = margin

@@ -36,6 +36,7 @@ class SpectrumPlotter:
         self.wavelengths = wavelengths.to_numpy()
         self.axis = axis
         self.ylim = ylim
+        self.figsize_in_pixel = figsize_in_pixel
         self.figsize = figsize_in_pixel / dpi
         self.dpi = dpi
         self.margin = margin

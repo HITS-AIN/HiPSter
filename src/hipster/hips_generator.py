@@ -2,6 +2,7 @@ import math
 import multiprocessing as mp
 import os
 import pathlib
+from datetime import datetime, timezone
 from typing import Callable
 
 import healpy
@@ -111,11 +112,33 @@ class HiPSGenerator(Task):
         result[q1.shape[0] :, q1.shape[1] :] = q4
         return result
 
+    def write_properties(self) -> None:
+        """Writes the properties of the HiPS data to a file."""
+        with open(
+            os.path.join(self.output_folder, "properties"), "w", encoding="utf-8"
+        ) as f:
+            f.write(
+                f"""creator_did          = ivo://HITS/hipster
+obs_title            = {self.title}
+dataproduct_type     = image
+dataproduct_subtype  = color
+hips_version         = 1.4
+hips_creation_date   = {datetime.now(tz=timezone.utc).isoformat()}
+hips_status          = public master clonable
+hips_tile_format     = jpeg
+hips_order           = {self.max_order}
+hips_order_min       = 0
+hips_tile_width      = {self.image_maker.figsize_in_pixel}
+hips_frame           = equatorial
+                """
+            )
+
     def execute(self) -> None:
         """Generates the HiPS tiles."""
 
         print(f"Executing task: {self.name}")
         self.__create_folders(self.max_order)
+        self.write_properties()
 
         for i in range(self.max_order + 1):
             if self.number_of_workers == 1:
