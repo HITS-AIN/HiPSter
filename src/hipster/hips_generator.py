@@ -26,6 +26,8 @@ class HiPSGenerator(Task):
         output_folder: str = "output",
         number_of_workers: int = 1,
         max_order: int = 1,
+        root_path: str = "",
+        title: str = "",
     ):
         """Generates a HiPS tiling following the standard defined in
         https://www.ivoa.net/documents/HiPS/20170519/REC-HIPS-1.0-20170519.pdf
@@ -38,11 +40,11 @@ class HiPSGenerator(Task):
             number_of_workers (int, optional): Number of workers. Defaults to 1.
             max_order (int, optional): Maximum order of the HiPS tiling. Defaults to 1.
         """
-        super().__init__("HiPSGenerator")
+        super().__init__("HiPSGenerator", root_path, title)
         self.decoder = decoder
         self.image_maker = image_maker
         self.hierarchy = hierarchy
-        self.output_folder = output_folder
+        self.output_folder = os.path.join(self.root_path, output_folder)
         self.number_of_workers = number_of_workers
         self.max_order = max_order
 

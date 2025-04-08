@@ -15,11 +15,13 @@ tasks:
             start: 336
             stop: 1021
             step: 2
+          ylim: [0, 1]
+          margin: 0.02
           figsize_in_pixel: 128
           flip: True
       output_folder: gaia/model_spectrum
       max_order: 1
-      hierarchy: 4
+      hierarchy: 1
   - class_path: hipster.HiPSGenerator
     init_args:
       decoder:
@@ -31,8 +33,9 @@ tasks:
             start: 336
             stop: 1021
             step: 2
+          margin: 0.02
           figsize_in_pixel: 128
           flip: True
       output_folder: gaia/model_absorption_line
       max_order: 1
-      hierarchy: 4
+      hierarchy: 1

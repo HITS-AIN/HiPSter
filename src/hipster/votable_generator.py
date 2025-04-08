@@ -22,9 +22,10 @@ class VOTableGenerator(Task):
         data_directory: str,
         output_file: str = "votable.vot",
         url: str = "http://localhost:8083",
-        title: str = "title",
         batch_size: int = 256,
         color: str = "red",
+        root_path: str = "",
+        title: str = "",
     ):
         """Generates a catalog of data.
 
@@ -37,12 +38,11 @@ class VOTableGenerator(Task):
             batch_size (int, optional): The batch size to use. Defaults to 256.
             color (str, optional): The color of the catalog. Defaults to "red".
         """
-        super().__init__("VOTableGenerator")
+        super().__init__("VOTableGenerator", root_path, title)
         self.encoder = encoder
         self.data_directory = data_directory
         self.output_file = output_file
         self.url = url
-        self.title = title
         self.batch_size = batch_size
         self.color = color
 
