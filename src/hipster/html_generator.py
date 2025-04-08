@@ -7,6 +7,7 @@ from jinja2 import Environment, FileSystemLoader
 class HTMLGenerator:
     def __init__(
         self,
+        root_path: str,
         url: str = "http://localhost:8083",
         title: str = "HiPSter",
         aladin_lite_version: str = "latest",
@@ -18,6 +19,7 @@ class HTMLGenerator:
             title (str): The title of the HiPS data.
             aladin_lite_version (str): The version of Aladin Lite to use.
         """
+        self.root_path = root_path
         self.url = url
         self.title = title
         self._aladin_lite_version = aladin_lite_version
@@ -52,11 +54,8 @@ class HTMLGenerator:
         """
         self._image_layers.append(votable_layer)
 
-    def generate(self, output_folder: str) -> None:
-        """Generate the HTML page for the HiPS data.
-        Args:
-            output_folder (str): The folder to save the generated HTML page.
-        """
+    def generate(self) -> None:
+        """Generate the HTML page for the HiPS data."""
         print("Generating HTML page...")
 
         template = self._environment.get_template("index.html")
@@ -67,8 +66,8 @@ class HTMLGenerator:
             catalog_layers=self._catalog_layers,
             aladin_lite_version=self._aladin_lite_version,
         )
-        os.makedirs(output_folder, exist_ok=True)
+        os.makedirs(self.root_path, exist_ok=True)
         with open(
-            os.path.join(output_folder, "index.html"), "w", encoding="utf-8"
+            os.path.join(self.root_path, "index.html"), "w", encoding="utf-8"
         ) as f:
             f.write(html)
