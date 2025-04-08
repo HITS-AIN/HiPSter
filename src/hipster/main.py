@@ -31,6 +31,7 @@ def main():
 
     # Print list of tasks
     if cfg.verbose:
+        print("Base URL:", cfg.html.url)
         print("Tasks:")
         for task in cfg.tasks:
             print(f"  - {task.__class__.__name__}")

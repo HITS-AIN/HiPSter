@@ -14,7 +14,7 @@
             aladin = A.aladin('#aladin-lite-div');
             aladin.removeLayers()
             {% for image_layer in image_layers %}
-                var imageLayer = aladin.createImageSurvey('{{ image_layer.hips_id }}', '{{ image_layer.hips_name }}', '{{ image_layer.hisp_base_url }}','equatorial', '{{ image_layer.hips_max_order }}', {imgFormat: 'jpg'});
+                var imageLayer = aladin.createImageSurvey('{{ image_layer.hips_id }}', '{{ image_layer.hips_name }}', '{{ image_layer.hips_url }}','equatorial', '{{ image_layer.hips_max_order }}', {imgFormat: 'jpg'});
                 aladin.addImageLayer(imageLayer);
             {% endfor %}
             {% for catalog_layer in catalog_layers %}

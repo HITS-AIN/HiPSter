@@ -1,6 +1,6 @@
 root_path: HiPSter
 html:
-  url: http://localhost:8083
+  url: http://rh04715.h-its.org:8083
   title: HiPSter representation of Gaia XP DR3
   aladin_lite_version: latest
 tasks:
@@ -19,9 +19,11 @@ tasks:
           margin: 0.02
           figsize_in_pixel: 128
           flip: True
+      hips_id: Gaia1
+      hips_name: Gaia XP DR3 model spectrum
       output_folder: gaia/model_spectrum
       max_order: 1
-      hierarchy: 1
+      hierarchy: 2
   - class_path: hipster.HiPSGenerator
     init_args:
       decoder:
@@ -36,6 +38,8 @@ tasks:
           margin: 0.02
           figsize_in_pixel: 128
           flip: True
+      hips_id: Gaia2
+      hips_name: Gaia XP DR3 model absorption line
       output_folder: gaia/model_absorption_line
       max_order: 1
-      hierarchy: 1
+      hierarchy: 2

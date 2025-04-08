@@ -37,7 +37,7 @@ class HTMLGenerator:
     class ImageLayer:
         hips_id: str
         hips_name: str
-        hips_base_url: str
+        hips_url: str
         hips_max_order: int
 
     def add_image_layer(self, image_layer: ImageLayer) -> None:
