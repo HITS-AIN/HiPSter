@@ -13,14 +13,17 @@
             A.init.then(() => {
             aladin = A.aladin('#aladin-lite-div');
             aladin.removeLayers()
+
             {% for image_layer in image_layers %}
-                var imageLayer = aladin.createImageSurvey('{{ image_layer.hips_id }}', '{{ image_layer.hips_name }}', '{{ image_layer.hips_url }}','equatorial', '{{ image_layer.hips_max_order }}', {imgFormat: 'jpg'});
-                aladin.addImageLayer(imageLayer);
+            var imageLayer{{ loop.index }} = aladin.createImageSurvey('{{ image_layer.hips_id }}', '{{ image_layer.hips_name }}', '{{ image_layer.hips_url }}','equatorial', '{{ image_layer.hips_max_order }}', {imgFormat: 'jpg'});
+            aladin.addImageLayer(imageLayer{{ loop.index }});
             {% endfor %}
+
             {% for catalog_layer in catalog_layers %}
-                var catalogLayer = A.catalogFromURL('{{ catalog_layer.url }}', {sourceSize:10, onClick: 'showPopup', color: '#ff00ff', shape: 'circle', name: '{{ catalog_layer.name }}'});
-                aladin.addCatalog(catalogLayer);
+            var catalogLayer{{ loop.index }} = A.catalogFromURL('{{ catalog_layer.url }}', {sourceSize:10, onClick: 'showPopup', color: '#ff00ff', shape: 'circle', name: '{{ catalog_layer.name }}'});
+            aladin.addCatalog(catalogLayer{{ loop.index }});
             {% endfor %}
+
             aladin.setFoV(180.0);
         });
     </script>
