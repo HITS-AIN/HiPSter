@@ -7,3 +7,4 @@ __pycache__
 dist/
 HiPSter/
 output/
+examples/config_work.yaml
