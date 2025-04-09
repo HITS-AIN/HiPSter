@@ -4,8 +4,14 @@
 
 # HiPSter
 
-[Spherinator](https://github.com/HITS-AIN/Spherinator) and `HiPSter` are tools to provide much needed explorative access and visualization for multimodal data from extremely large astrophysical datasets, ranging from exascale cosmological simulations to multi-billion object observational galaxy surveys. `Spherinator` uses dimensionality reduction to learn a low-dimensional representation of galaxy structure, and `HiPSter` creates a interactive hierarchical spherical vizualization of the entire dataset. They currently support multichannel maps or images as input. `Spherinator` uses [PyTorch Lightning](https://lightning.ai/docs/pytorch/stable/) to implement a convolutional neural network (CNN) based variational autoencoder (VAE) with a spherical latent space.
-`HiPSter` creates HiPS tilings and a catalog which can be visualized interactively on the surface of a sphere using [Aladin Lite](https://github.com/cds-astro/aladin-lite).
+The `HiPSter` package is designed to be used in conjunction with the
+[Spherinator](https://github.com/HITS-AIN/Spherinator) package.
+`HiPSter` are tools to provide much needed explorative access and visualization for multimodal data
+from extremely large astrophysical datasets, ranging from exascale cosmological simulations to
+multi-billion object observational galaxy surveys.
+`HiPSter` creates HiPS tilings and a catalog which can be visualized interactively on the surface of
+a sphere using [Aladin Lite](https://github.com/cds-astro/aladin-lite).
+
 
 <p align="center">
   <img src="docs/assets/P404_f2.png" width="400" height="400">
@@ -18,9 +24,23 @@
 pip install git+https://github.com/HITS-AIN/HiPSter
 ```
 
+## Usage
+
+The `HiPSter` package provides a CLI to create HiPS tilings and a catalog from the spherical latent
+space representation.
+
+```bash
+hipster --config <path_to_config_file>
+```
+
+For more details run `hipster --help` or check the [documentation](https://spherinator.readthedocs.io/en/latest/hipster.html#command-line-interface).
+
+
 ## Documentation
 
-[Read The Docs](https://spherinator.readthedocs.io/en/latest/index.html)
+The `HiPSter` documentation is part of the Spherinator documentation and can be found at:
+
+[Read The Docs](https://spherinator.readthedocs.io/en/latest/hipster.html)
 
 
 ## Acknowledgments
