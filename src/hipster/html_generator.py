@@ -2,7 +2,6 @@ import os
 from dataclasses import dataclass
 
 from jinja2 import Environment, FileSystemLoader
-from numpy import shape, size
 
 
 class HTMLGenerator:
