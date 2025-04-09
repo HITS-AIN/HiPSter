@@ -24,13 +24,13 @@ class HiPSGenerator(Task):
         decoder: Inference,
         image_maker: Callable,
         hierarchy: int = 1,
-        output_folder: str = "output",
+        hips_path: str = "output",
         number_of_workers: int = 1,
         max_order: int = 1,
-        root_path: str = "",
-        title: str = "",
         hips_id: str = "",
         hips_name: str = "",
+        *args,
+        **kwargs,
     ):
         """Generates a HiPS tiling following the standard defined in
         https://www.ivoa.net/documents/HiPS/20170519/REC-HIPS-1.0-20170519.pdf
@@ -39,15 +39,18 @@ class HiPSGenerator(Task):
             decoder(Inference): Function that reconstructs the data.
             image_maker (callable): Function that generates the image.
             hierarchy (int, optional): Hierarchy of the HiPS tiling. Defaults to 1.
-            output_folder (str, optional): Output folder. Defaults to "output".
+            output_path (str, optional): Output path. Defaults to "output".
             number_of_workers (int, optional): Number of workers. Defaults to 1.
             max_order (int, optional): Maximum order of the HiPS tiling. Defaults to 1.
+            hips_id (str, optional): HiPS ID. Defaults to "".
+            hips_name (str, optional): HiPS name. Defaults to "".
         """
-        super().__init__("HiPSGenerator", root_path, title)
+        super().__init__("HiPSGenerator", *args, **kwargs)
         self.decoder = decoder
         self.image_maker = image_maker
         self.hierarchy = hierarchy
-        self.output_folder = os.path.join(self.root_path, output_folder)
+        self.hips_path = hips_path
+        self.output_path = os.path.join(self.root_path, hips_path)
         self.number_of_workers = number_of_workers
         self.max_order = max_order
         self.hips_id = hips_id
@@ -69,7 +72,7 @@ class HiPSGenerator(Task):
             image = Image.fromarray(image)
             image.save(
                 os.path.join(
-                    self.output_folder,
+                    self.output_path,
                     "Norder" + str(i),
                     "Dir" + str(int(math.floor(j / 10000)) * 10000),
                     "Npix" + str(j) + ".jpg",
@@ -85,7 +88,7 @@ class HiPSGenerator(Task):
         Args:
             max_order (int): Maximum order of the HiPS tiling.
         """
-        path1 = pathlib.Path(self.output_folder)
+        path1 = pathlib.Path(self.output_path)
         path1.mkdir(parents=True, exist_ok=True)
         for i in range(max_order + 1):
             path2 = path1 / f"Norder{i}"
@@ -119,7 +122,7 @@ class HiPSGenerator(Task):
     def write_properties(self) -> None:
         """Writes the properties of the HiPS data to a file."""
         with open(
-            os.path.join(self.output_folder, "properties"), "w", encoding="utf-8"
+            os.path.join(self.output_path, "properties"), "w", encoding="utf-8"
         ) as f:
             f.write(
                 f"""
@@ -175,7 +178,7 @@ hips_frame           = equatorial
             html_generator.ImageLayer(
                 hips_id=self.hips_id,
                 hips_name=self.hips_name,
-                hips_url=f"{html_generator.url}/{self.output_folder}",
+                hips_url=f"{html_generator.url}/{self.hips_path}",
                 hips_max_order=self.max_order,
             )
         )

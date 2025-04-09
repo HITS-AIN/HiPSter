@@ -13,7 +13,7 @@ def test_hips_generator(tmp_path, hierarchy):
             ylim=(0, 1),
             figsize_in_pixel=64,
         ),
-        output_folder=tmp_path,
+        hips_path=tmp_path,
         hierarchy=hierarchy,
     )
 

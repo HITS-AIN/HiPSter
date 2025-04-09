@@ -21,7 +21,7 @@ tasks:
           flip: True
       hips_id: Gaia1
       hips_name: Gaia XP DR3 model spectrum
-      output_folder: gaia/model_spectrum
+      hips_path: gaia/model_spectrum
       max_order: 2
       hierarchy: 2
   - class_path: hipster.HiPSGenerator
@@ -40,6 +40,6 @@ tasks:
           flip: True
       hips_id: Gaia2
       hips_name: Gaia XP DR3 model absorption line
-      output_folder: gaia/model_absorption_line
+      hips_path: gaia/model_absorption_line
       max_order: 2
       hierarchy: 2
