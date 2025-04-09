@@ -4,13 +4,14 @@
 
 # HiPSter
 
-The `HiPSter` package is designed to be used in conjunction with the
-[Spherinator](https://github.com/HITS-AIN/Spherinator) package.
-`HiPSter` are tools to provide much needed explorative access and visualization for multimodal data
-from extremely large astrophysical datasets, ranging from exascale cosmological simulations to
-multi-billion object observational galaxy surveys.
-`HiPSter` creates HiPS tilings and a catalog which can be visualized interactively on the surface of
-a sphere using [Aladin Lite](https://github.com/cds-astro/aladin-lite).
+[Spherinator](https://github.com/HITS-AIN/Spherinator) and
+[HiPSter](https://github.com/HITS-AIN/HiPSter) are tools that provide explorative access
+and visualization for multimodal data from extremely large astrophysical datasets, ranging from
+exascale cosmological simulations to multi-billion object observational galaxy surveys.
+
+HiPSter uses a trained model from Spherinator with a spherical latent space to create HiPS tilings
+and a catalog that can be visualized interactively on the surface of a sphere using
+[Aladin Lite](https://github.com/cds-astro/aladin-lite).
 
 
 <p align="center">
