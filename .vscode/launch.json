@@ -5,20 +5,11 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Spherinator",
-            "type": "debugpy",
-            "request": "launch",
-            "program": "src/spherinator/main.py",
-            "args": "fit -c experiments/illustris_power.yaml",
-            "console": "integratedTerminal",
-            "justMyCode": true
-        },
-        {
             "name": "Python: HiPSter",
             "type": "debugpy",
             "request": "launch",
             "program": "src/hipster/main.py",
-            "args": "-t hips -c /experiments/illustris_power.yaml",
+            "args": "--config examples/config_work.yaml",
             "console": "integratedTerminal",
             "justMyCode": true
         },
