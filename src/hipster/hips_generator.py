@@ -29,7 +29,6 @@ class HiPSGenerator(Task):
         max_order: int = 1,
         hips_id: str = "",
         hips_name: str = "",
-        *args,
         **kwargs,
     ):
         """Generates a HiPS tiling following the standard defined in
@@ -45,7 +44,7 @@ class HiPSGenerator(Task):
             hips_id (str, optional): HiPS ID. Defaults to "".
             hips_name (str, optional): HiPS name. Defaults to "".
         """
-        super().__init__("HiPSGenerator", *args, **kwargs)
+        super().__init__("HiPSGenerator", **kwargs)
         self.decoder = decoder
         self.image_maker = image_maker
         self.hierarchy = hierarchy

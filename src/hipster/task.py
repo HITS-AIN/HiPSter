@@ -4,7 +4,7 @@ from hipster.html_generator import HTMLGenerator
 
 
 class Task(ABC):
-    def __init__(self, name, root_path: str, title: str = "") -> None:
+    def __init__(self, name, root_path: str = "", title: str = "") -> None:
         """Base class for all tasks.
         Args:
             name (str): The name of the task.

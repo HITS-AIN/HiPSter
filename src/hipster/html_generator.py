@@ -2,6 +2,7 @@ import os
 from dataclasses import dataclass
 
 from jinja2 import Environment, FileSystemLoader
+from numpy import shape, size
 
 
 class HTMLGenerator:
@@ -24,8 +25,8 @@ class HTMLGenerator:
         self.title = title
         self._aladin_lite_version = aladin_lite_version
         self._image_layers = []
-        self._votable_layers = []
-        self._catalog_layers = []
+        self._votables = []
+        self._catalogs = []
 
         self._environment = Environment(
             loader=FileSystemLoader(
@@ -47,12 +48,20 @@ class HTMLGenerator:
         """
         self._image_layers.append(image_layer)
 
-    def add_votable(self, votable_layer: str) -> None:
+    @dataclass
+    class VOTable:
+        url: str
+        name: str
+        color: str
+        shape: str
+        size: int
+
+    def add_votable(self, votable: VOTable) -> None:
         """Add a VOTable layer to the HTML page.
         Args:
             layer (str): The VOTable layer to add.
         """
-        self._image_layers.append(votable_layer)
+        self._votables.append(votable)
 
     def generate(self) -> None:
         """Generate the HTML page for the HiPS data."""
@@ -62,8 +71,8 @@ class HTMLGenerator:
         html = template.render(
             title=self.title,
             image_layers=self._image_layers,
-            votable_layers=self._votable_layers,
-            catalog_layers=self._catalog_layers,
+            votables=self._votables,
+            catalogs=self._catalogs,
             aladin_lite_version=self._aladin_lite_version,
         )
         os.makedirs(self.root_path, exist_ok=True)

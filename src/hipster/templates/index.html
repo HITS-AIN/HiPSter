@@ -16,11 +16,11 @@
 
             {% for image_layer in image_layers %}
             var imageLayer{{ loop.index }} = aladin.createImageSurvey('{{ image_layer.hips_id }}', '{{ image_layer.hips_name }}', '{{ image_layer.hips_url }}','equatorial', '{{ image_layer.hips_max_order }}', {imgFormat: 'jpg'});
-            aladin.addImageLayer(imageLayer{{ loop.index }});
+            aladin.setImageLayer(imageLayer{{ loop.index }});
             {% endfor %}
 
-            {% for catalog_layer in catalog_layers %}
-            var catalogLayer{{ loop.index }} = A.catalogFromURL('{{ catalog_layer.url }}', {sourceSize:10, onClick: 'showPopup', color: '#ff00ff', shape: 'circle', name: '{{ catalog_layer.name }}'});
+            {% for votable in votables %}
+            var catalogLayer{{ loop.index }} = A.catalogFromURL('{{ votable.url }}', {sourceSize:{{ votable.size }}, onClick: 'showPopup', color: '{{ votable.color }}', shape: '{{ votable.shape }}', name: '{{ votable.name }}'});
             aladin.addCatalog(catalogLayer{{ loop.index }});
             {% endfor %}
 

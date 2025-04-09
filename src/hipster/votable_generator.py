@@ -1,4 +1,5 @@
 import math
+import os
 
 import healpy
 import numpy as np
@@ -23,9 +24,11 @@ class VOTableGenerator(Task):
         output_file: str = "votable.vot",
         url: str = "http://localhost:8083",
         batch_size: int = 256,
+        catalog_name: str = "",
         color: str = "red",
-        root_path: str = "",
-        title: str = "",
+        shape: str = "circle",
+        size: int = 10,
+        **kwargs,
     ):
         """Generates a catalog of data.
 
@@ -34,17 +37,23 @@ class VOTableGenerator(Task):
             data_directory (str): The directory containing the data.
             output_file (str, optional): The output file name. Defaults to "votable.xml".
             url (str): The URL of the HiPS server. Defaults to "http://localhost:8083".
-            title (str): The title of the HiPS. Defaults to "title".
             batch_size (int, optional): The batch size to use. Defaults to 256.
+            catalog_name (str, optional): The name of the catalog. Defaults to "".
             color (str, optional): The color of the catalog. Defaults to "red".
+            shape (str, optional): The shape of the catalog. Defaults to "circle".
+            size (int, optional): The size of the catalog. Defaults to 10.
+            **kwargs: Additional keyword arguments.
         """
-        super().__init__("VOTableGenerator", root_path, title)
+        super().__init__("VOTableGenerator", **kwargs)
         self.encoder = encoder
         self.data_directory = data_directory
         self.output_file = output_file
         self.url = url
         self.batch_size = batch_size
+        self.catalog_name = catalog_name
         self.color = color
+        self.shape = shape
+        self.size = size
 
     def get_data(self) -> pd.DataFrame:
         """Generates the catalog."""
@@ -111,11 +120,16 @@ class VOTableGenerator(Task):
     def execute(self) -> None:
         print(f"Executing task: {self.name}")
         table = Table.from_pandas(self.get_data())
-        writeto(table, self.output_file)
+        writeto(table, os.path.join(self.root_path, self.output_file))
 
     def register(self, html_generator: HTMLGenerator) -> None:
-        """Register the HiPS generator to the HTML generator."""
+        """Register the VOTable to the HTML generator."""
         html_generator.add_votable(
-            url=f"{html_generator.url}/{self.title}",
-            color=self.color,
+            html_generator.VOTable(
+                url=f"{html_generator.url}/{self.title}",
+                name=self.catalog_name,
+                color=self.color,
+                shape=self.shape,
+                size=self.size,
+            )
         )

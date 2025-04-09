@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+import os
+
 from jsonargparse import ArgumentParser
 
 from hipster import HTMLGenerator, Task
@@ -35,6 +37,8 @@ def main():
         print("Tasks:")
         for task in cfg.tasks:
             print(f"  - {task.__class__.__name__}")
+
+    os.makedirs(cfg.root_path, exist_ok=cfg.overwrite)
 
     # Execute tasks
     for task in cfg.tasks:

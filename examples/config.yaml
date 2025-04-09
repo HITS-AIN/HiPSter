@@ -43,3 +43,11 @@ tasks:
       hips_path: gaia/model_absorption_line
       max_order: 2
       hierarchy: 2
+  - class_path: hipster.VOTableGenerator
+    init_args:
+      encoder:
+        model_path: encoder.onnx
+      data_directory: data/gaia/xp_calibrated
+      color: red
+      shape: circle
+      size: 10
