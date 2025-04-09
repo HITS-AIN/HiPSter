@@ -126,7 +126,7 @@ class VOTableGenerator(Task):
         """Register the VOTable to the HTML generator."""
         html_generator.add_votable(
             html_generator.VOTable(
-                url=f"{html_generator.url}/{self.title}",
+                url=f"{html_generator.url}/{self.output_file}",
                 name=self.catalog_name,
                 color=self.color,
                 shape=self.shape,
