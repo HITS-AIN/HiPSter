@@ -12,7 +12,14 @@ class Inference:
         input_name: str = "x",
         batch_size: int = 256,
     ):
-        self.model = ort.InferenceSession(os.fspath(model_path))
+        self.model = ort.InferenceSession(
+            os.fspath(model_path),
+            providers=[
+                # "TensorrtExecutionProvider",
+                "CUDAExecutionProvider",
+                "CPUExecutionProvider",
+            ],
+        )
         self.input_name = input_name
         self.batch_size = batch_size
 
