@@ -15,7 +15,7 @@ and a catalog that can be visualized interactively on the surface of a sphere us
 
 
 <p align="center">
-  <img src="docs/assets/P404_f2.png" width="400" height="400">
+  <img src="images/P404_f2.png" width="400" height="400">
 </p>
 
 
