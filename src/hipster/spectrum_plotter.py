@@ -1,7 +1,6 @@
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
-import scipy as sp
 
 from .range import Range
 from .wavelength_to_rgb import wavelength_to_rgb
