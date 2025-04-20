@@ -99,7 +99,7 @@ class HiPSGenerator(Task):
     def generate_tile(self, data, order, pixel, hierarchy, index):
         """Construct the hierarchical tiling of the HiPS."""
         if hierarchy <= 1:
-            return self.image_maker(data[index][0])
+            return self.image_maker(data[index])
 
         q1 = self.generate_tile(data, order + 1, pixel * 4, hierarchy / 2, index * 4)
         q2 = self.generate_tile(

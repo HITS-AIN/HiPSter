@@ -1,6 +1,7 @@
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
+import scipy as sp
 
 from .range import Range
 from .wavelength_to_rgb import wavelength_to_rgb
@@ -51,7 +52,11 @@ class SpectrumPlotter:
             "spectrum", colorlist
         )
 
-    def __call__(self, spectrum: np.ndarray):
+    def __call__(self, data: np.ndarray) -> np.ndarray:
+
+        if data.ndim == 2:
+            assert data.shape[0] == 1, "multi channel spectrum not supported"
+            data = data[0]
 
         if self.dark_background:
             plt.style.use("dark_background")
@@ -66,8 +71,8 @@ class SpectrumPlotter:
         fig, ax = plt.subplots(figsize=(self.figsize, self.figsize), dpi=self.dpi)
 
         # Create the spectrum plot up to 10% above the maximum intensity to avoid artifacts in the image
-        spectrum_max = max(1.0, np.max(spectrum) * 1.1)
-        ax.plot(self.wavelengths, spectrum, color=line_color, linewidth=1)
+        spectrum_max = max(1.0, np.max(data) * 1.1)
+        ax.plot(self.wavelengths, data, color=line_color, linewidth=1)
 
         y = np.linspace(0, spectrum_max, 100)
         X, Y = np.meshgrid(self.wavelengths, y)
@@ -84,7 +89,7 @@ class SpectrumPlotter:
         )
         # Fill the area above the spectrum with white. Add 10% to avoid artifacts in the image.
         ax.fill_between(
-            self.wavelengths, spectrum, spectrum_max * 1.1, color=background_color
+            self.wavelengths, data, spectrum_max * 1.1, color=background_color
         )
 
         if self.ylim:

@@ -40,13 +40,17 @@ class AbsorptionLinePlotter:
         self.dark_background = dark_background
         self.flip = flip
 
-    def __call__(self, flux: np.ndarray) -> np.ndarray:
+    def __call__(self, data: np.ndarray) -> np.ndarray:
+
+        if data.ndim == 2:
+            assert data.shape[0] == 1, "multi channel spectrum not supported"
+            data = data[0]
 
         if self.dark_background:
             plt.style.use("dark_background")
 
         if self.normalize:
-            flux = (flux - np.min(flux)) / (np.max(flux) - np.min(flux))
+            data = (data - np.min(data)) / (np.max(data) - np.min(data))
 
         height = 100  # how "tall" you want the 2D image
         n_wl = len(self.wavelengths)
@@ -56,7 +60,7 @@ class AbsorptionLinePlotter:
             base_color = wavelength_to_rgb(wl, gamma=0.8)
             # Scale the color by flux to adjust brightness
             # You could adjust scaling or normalization here if needed.
-            color_col = [c * flux[i] for c in base_color]
+            color_col = [c * data[i] for c in base_color]
 
             # Fill this column (all rows in column i have the same color)
             spectrum_image_rgb[:, i, :] = color_col
