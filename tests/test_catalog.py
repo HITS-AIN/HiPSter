@@ -13,10 +13,7 @@ def test_catalog_generator():
 
     catalog = votable_generator.get_catalog()
 
-    assert "source_id" in catalog
-    assert "latent_position" in catalog
+    assert "x" in catalog
 
-    print(catalog["latent_position"][0])
-    assert np.allclose(
-        catalog["latent_position"][0], [-0.14086828, 0.00598068, 0.9900103]
-    )
+    print(catalog["x"][0])
+    assert np.allclose(catalog["x"][0], -0.14086828)

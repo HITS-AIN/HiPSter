@@ -64,7 +64,9 @@ class VOTableGenerator(Task):
         catalog = {
             "preview": [],
             "source_id": [],
-            "latent_position": [],
+            "x": [],
+            "y": [],
+            "z": [],
             "RA2000": [],
             "DEC2000": [],
         }
@@ -88,8 +90,12 @@ class VOTableGenerator(Task):
                 .astype(np.float32)
             )
 
-            for i, x in enumerate(data):
-                data[i] = (x - x.min()) / (x.max() - x.min())
+            # Normalize the data
+            for i in range(data.shape[0]):  # batches
+                for j in range(data.shape[1]):  # channels
+                    data[i][j] = (data[i][j] - data[i][j].min()) / (
+                        data[i][j].max() - data[i][j].min()
+                    )
 
             latent_position = self.encoder(data)
 
@@ -114,7 +120,9 @@ class VOTableGenerator(Task):
                     + ".jpg'></a>,"
                 )
             catalog["source_id"].extend(batch["source_id"].to_pylist())
-            catalog["latent_position"].extend(latent_position)
+            catalog["x"].extend(latent_position[:, 0])
+            catalog["y"].extend(latent_position[:, 1])
+            catalog["z"].extend(latent_position[:, 2])
             catalog["RA2000"].extend(angles[:, 1])
             catalog["DEC2000"].extend(90.0 - angles[:, 0])
 
