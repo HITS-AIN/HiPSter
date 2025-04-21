@@ -58,10 +58,10 @@ class VOTableGenerator(Task):
         self.shape = shape
         self.size = size
 
-    def get_data(self) -> pd.DataFrame:
+    def get_catalog(self) -> pd.DataFrame:
         """Generates the catalog."""
 
-        data = {
+        catalog = {
             "preview": [],
             "source_id": [],
             "latent_position": [],
@@ -79,25 +79,25 @@ class VOTableGenerator(Task):
             shape = tuple(map(int, shape))
 
         for batch in dataset.to_batches(batch_size=self.batch_size):
-            flux = batch[self.data_column].flatten().to_numpy().reshape(-1, *shape)
+            data = (
+                batch[self.data_column]
+                .flatten()
+                .to_numpy()
+                .reshape(-1, *shape)
+                .copy()
+                .astype(np.float32)
+            )
 
-            # if flux.shape[0] != self.batch_size:
-            #     print(f"Skipping batch with shape {flux.shape}")
-            #     continue
+            for i, x in enumerate(data):
+                data[i] = (x - x.min()) / (x.max() - x.min())
 
-            # Normalize the flux.
-            # flux is read-only, so we need to create a copy.
-            flux = flux.copy()
-            for i, x in enumerate(flux):
-                flux[i] = (x - x.min()) / (x.max() - x.min())
-
-            latent_position = self.encoder(flux)
+            latent_position = self.encoder(data)
 
             angles = np.array(healpy.vec2ang(latent_position)) * 180.0 / math.pi
             angles = angles.T
 
             for source_id in batch["source_id"]:
-                data["preview"].append(
+                catalog["preview"].append(
                     "<a href='"
                     + self.url
                     + "/"
@@ -113,16 +113,16 @@ class VOTableGenerator(Task):
                     + str(source_id)
                     + ".jpg'></a>,"
                 )
-            data["source_id"].extend(batch["source_id"].to_pylist())
-            data["latent_position"].extend(latent_position)
-            data["RA2000"].extend(angles[:, 1])
-            data["DEC2000"].extend(90.0 - angles[:, 0])
+            catalog["source_id"].extend(batch["source_id"].to_pylist())
+            catalog["latent_position"].extend(latent_position)
+            catalog["RA2000"].extend(angles[:, 1])
+            catalog["DEC2000"].extend(90.0 - angles[:, 0])
 
-        return pa.table(data).to_pandas()
+        return pa.table(catalog).to_pandas()
 
     def execute(self) -> None:
         print(f"Executing task: {self.name}")
-        table = Table.from_pandas(self.get_data())
+        table = Table.from_pandas(self.get_catalog())
         writeto(table, os.path.join(self.root_path, self.output_file))
 
     def register(self, html_generator: HTMLGenerator) -> None:
