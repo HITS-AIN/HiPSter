@@ -21,7 +21,7 @@ class VOTableGenerator(Task):
         self,
         encoder: Inference,
         data_directory: str,
-        data_column: str,
+        data_column: str = "data",
         output_file: str = "votable.vot",
         url: str = "http://localhost:8083",
         batch_size: int = 256,
