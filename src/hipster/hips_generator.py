@@ -145,7 +145,6 @@ hips_frame           = equatorial
 
         print(f"Executing task: {self.name}")
         self.__create_folders(self.max_order)
-        self.write_properties()
 
         for i in range(self.max_order + 1):
             if self.number_of_workers == 1:
@@ -170,6 +169,11 @@ hips_frame           = equatorial
                     mypool[-1].start()
                 for process in mypool:
                     process.join()
+
+        # Write the properties of the HiPS data to a file
+        # This must be done after the tiles are generated
+        # to ensure the tile size is correct
+        self.write_properties()
 
     def register(self, html_generator: HTMLGenerator) -> None:
         """Register the HiPS generator to the HTML generator."""
