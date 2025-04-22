@@ -14,10 +14,16 @@ class Inference:
     ):
         self.model = ort.InferenceSession(
             os.fspath(model_path),
-            providers=ort.get_available_providers(),
+            providers=self.__get_providers(),
         )
         self.input_name = input_name
         self.batch_size = batch_size
+
+    def __get_providers(self):
+        if "CUDAExecutionProvider" in ort.get_available_providers():
+            return ["CUDAExecutionProvider", "CPUExecutionProvider"]
+        else:
+            return ["CPUExecutionProvider"]
 
     def __call__(self, data: np.ndarray) -> np.ndarray:
         results = []
