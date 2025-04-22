@@ -118,15 +118,15 @@ class VOTableGenerator(Task):
                     )
                 catalog["source id"].extend(batch["source_id"].to_pylist())
             elif self.dataset == "illustris":
-                for simulation in batch["simulation"]:
-                    for snapshot in batch["snapshot"]:
-                        for subhalo_id in batch["subhalo_id"]:
-                            catalog["preview"].append(
-                                f"<a href='{self.url}/{self.title}/images/{simulation}/{snapshot}/"
-                                + f"{str(subhalo_id)}.jpg' target='_blank'>"
-                                + f"<img src='{self.url}/{self.title}/thumbnails/{simulation}/{snapshot}/"
-                                + f"{str(subhalo_id)}.jpg'></a>"
-                            )
+                for simulation, snapshot, subhalo_id in zip(
+                    batch["simulation"], batch["snapshot"], batch["subhalo_id"]
+                ):
+                    catalog["preview"].append(
+                        f"<a href='{self.url}/{self.title}/images/{simulation}/{snapshot}/"
+                        + f"{str(subhalo_id)}.jpg' target='_blank'>"
+                        + f"<img src='{self.url}/{self.title}/thumbnails/{simulation}/{snapshot}/"
+                        + f"{str(subhalo_id)}.jpg'></a>"
+                    )
                 catalog["simulation"].extend(batch["simulation"].to_pylist())
                 catalog["snapshot"].extend(batch["snapshot"].to_pylist())
                 catalog["subhalo id"].extend(batch["subhalo_id"].to_pylist())
