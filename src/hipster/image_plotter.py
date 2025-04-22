@@ -1,11 +1,4 @@
-import matplotlib
-import matplotlib.pyplot as plt
 import numpy as np
-
-from .range import Range
-from .wavelength_to_rgb import wavelength_to_rgb
-
-matplotlib.use("Agg")
 
 
 class ImagePlotter:
