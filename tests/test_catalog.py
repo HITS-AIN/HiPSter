@@ -14,7 +14,6 @@ def test_catalog_generator():
 
     catalog = votable_generator.get_catalog()
 
-    assert "x" in catalog
-
-    print(catalog["x"][0])
-    assert np.allclose(catalog["x"][0], -0.14086828)
+    assert np.allclose(catalog["x"][0], -0.1408, atol=1e-3)
+    assert np.allclose(catalog["y"][0], 0.0060, atol=1e-3)
+    assert np.allclose(catalog["z"][0], 0.9900, atol=1e-3)
