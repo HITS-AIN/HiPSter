@@ -122,8 +122,10 @@ class VOTableGenerator(Task):
                     for snapshot in batch["snapshot"]:
                         for subhalo_id in batch["subhalo_id"]:
                             catalog["preview"].append(
-                                f"<a href='{self.url}/{self.title}/images/{simulation}/{snapshot}/{str(subhalo_id)}.jpg' target='_blank'>"
-                                + f"<img src='{self.url}/{self.title}/thumbnails/{simulation}/{snapshot}/{str(subhalo_id)}.jpg'></a>"
+                                f"<a href='{self.url}/{self.title}/images/{simulation}/{snapshot}/"
+                                + f"{str(subhalo_id)}.jpg' target='_blank'>"
+                                + f"<img src='{self.url}/{self.title}/thumbnails/{simulation}/{snapshot}/"
+                                + f"{str(subhalo_id)}.jpg'></a>"
                             )
                 catalog["simulation"].extend(batch["simulation"].to_pylist())
                 catalog["snapshot"].extend(batch["snapshot"].to_pylist())
