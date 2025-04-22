@@ -14,11 +14,7 @@ class Inference:
     ):
         self.model = ort.InferenceSession(
             os.fspath(model_path),
-            providers=[
-                # "TensorrtExecutionProvider",
-                "CUDAExecutionProvider",
-                "CPUExecutionProvider",
-            ],
+            providers=ort.get_available_providers(),
         )
         self.input_name = input_name
         self.batch_size = batch_size
