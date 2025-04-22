@@ -4,7 +4,6 @@ import os
 import healpy
 import numpy as np
 import pandas as pd
-import pyarrow as pa
 import pyarrow.dataset as ds
 from astropy.io.votable import writeto
 from astropy.table import Table
@@ -22,7 +21,8 @@ class VOTableGenerator(Task):
         encoder: Inference,
         data_directory: str,
         data_column: str = "data",
-        output_file: str = "votable.vot",
+        dataset: str = "illustris",
+        output_file: str = "illustris.vot",
         url: str = "http://localhost:8083",
         batch_size: int = 256,
         catalog_name: str = "",
@@ -37,6 +37,7 @@ class VOTableGenerator(Task):
             encoder (callable): Function that encodes the data.
             data_directory (str): The directory containing the data.
             data_column (str): The column name of the data.
+            dataset (str): The type of dataset. Defaults to "gaia".
             output_file (str, optional): The output file name. Defaults to "votable.xml".
             url (str): The URL of the HiPS server. Defaults to "http://localhost:8083".
             batch_size (int, optional): The batch size to use. Defaults to 256.
@@ -50,6 +51,7 @@ class VOTableGenerator(Task):
         self.encoder = encoder
         self.data_directory = data_directory
         self.data_column = data_column
+        self.dataset = dataset
         self.output_file = output_file
         self.url = url
         self.batch_size = batch_size
@@ -63,15 +65,21 @@ class VOTableGenerator(Task):
 
         catalog = {
             "preview": [],
-            "source_id": [],
             "x": [],
             "y": [],
             "z": [],
             "RA2000": [],
             "DEC2000": [],
         }
+
+        if self.dataset == "gaia":
+            catalog["source id"] = []
+        elif self.dataset == "illustris":
+            catalog["simulation"] = []
+            catalog["snapshot"] = []
+            catalog["subhalo id"] = []
+
         dataset = ds.dataset(self.data_directory, format="parquet")
-        # dataset = dataset.filter(ds.field("source_id") % 10 == 0)
 
         # Reshape the data if the shape is stored in the metadata.
         metadata_shape = bytes(self.data_column, "utf8") + b"_shape"
@@ -102,31 +110,32 @@ class VOTableGenerator(Task):
             angles = np.array(healpy.vec2ang(latent_position)) * 180.0 / math.pi
             angles = angles.T
 
-            for source_id in batch["source_id"]:
-                catalog["preview"].append(
-                    "<a href='"
-                    + self.url
-                    + "/"
-                    + self.title
-                    + "/images/"
-                    + str(source_id)
-                    + ".jpg' target='_blank'>"
-                    "<img src='"
-                    + self.url
-                    + "/"
-                    + self.title
-                    + "/thumbnails/"
-                    + str(source_id)
-                    + ".jpg'></a>,"
-                )
-            catalog["source_id"].extend(batch["source_id"].to_pylist())
+            if self.dataset == "gaia":
+                for source_id in batch["source_id"]:
+                    catalog["preview"].append(
+                        f"<a href='{self.url}/{self.title}/images/{str(source_id)}.jpg' target='_blank'>"
+                        + f"<img src='{self.url}/{self.title}/thumbnails/{str(source_id)}.jpg'></a>"
+                    )
+                catalog["source id"].extend(batch["source_id"].to_pylist())
+            elif self.dataset == "illustris":
+                for simulation in batch["simulation"]:
+                    for snapshot in batch["snapshot"]:
+                        for subhalo_id in batch["subhalo_id"]:
+                            catalog["preview"].append(
+                                f"<a href='{self.url}/{self.title}/images/{simulation}/{snapshot}/{str(subhalo_id)}.jpg' target='_blank'>"
+                                + f"<img src='{self.url}/{self.title}/thumbnails/{simulation}/{snapshot}/{str(subhalo_id)}.jpg'></a>"
+                            )
+                catalog["simulation"].extend(batch["simulation"].to_pylist())
+                catalog["snapshot"].extend(batch["snapshot"].to_pylist())
+                catalog["subhalo id"].extend(batch["subhalo_id"].to_pylist())
+
             catalog["x"].extend(latent_position[:, 0])
             catalog["y"].extend(latent_position[:, 1])
             catalog["z"].extend(latent_position[:, 2])
             catalog["RA2000"].extend(angles[:, 1])
             catalog["DEC2000"].extend(90.0 - angles[:, 0])
 
-        return pa.table(catalog).to_pandas()
+        return pd.DataFrame(catalog)
 
     def execute(self) -> None:
         print(f"Executing task: {self.name}")
