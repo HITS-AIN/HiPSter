@@ -21,6 +21,7 @@ class ImagePlotter:
         self.figsize_in_pixel = data.shape[1]
 
         data = np.clip(data.transpose(1, 2, 0), 0, 1) * 255
+        data = data.astype(np.uint8)
 
         if self.flip:
             data = np.fliplr(data)
