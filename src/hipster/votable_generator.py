@@ -7,6 +7,7 @@ import pandas as pd
 import pyarrow.dataset as ds
 from astropy.io.votable import writeto
 from astropy.table import Table
+from PIL import Image
 
 from hipster.html_generator import HTMLGenerator
 
@@ -73,11 +74,11 @@ class VOTableGenerator(Task):
         }
 
         if self.dataset == "gaia":
-            catalog["source id"] = []
+            catalog["source_id"] = []
         elif self.dataset == "illustris":
             catalog["simulation"] = []
             catalog["snapshot"] = []
-            catalog["subhalo id"] = []
+            catalog["subhalo_id"] = []
 
         dataset = ds.dataset(self.data_directory, format="parquet")
 
@@ -105,6 +106,9 @@ class VOTableGenerator(Task):
                         data[i][j].max() - data[i][j].min()
                     )
 
+            if self.dataset == "illustris":
+                self.__images_to_jpg(batch)
+
             latent_position = self.encoder(data)
 
             angles = np.array(healpy.vec2ang(latent_position)) * 180.0 / math.pi
@@ -116,7 +120,7 @@ class VOTableGenerator(Task):
                         f"<a href='{self.url}/{self.title}/images/{str(source_id)}.jpg' target='_blank'>"
                         + f"<img src='{self.url}/{self.title}/thumbnails/{str(source_id)}.jpg'></a>"
                     )
-                catalog["source id"].extend(batch["source_id"].to_pylist())
+                catalog["source_id"].extend(batch["source_id"].to_pylist())
             elif self.dataset == "illustris":
                 for simulation, snapshot, subhalo_id in zip(
                     batch["simulation"], batch["snapshot"], batch["subhalo_id"]
@@ -129,7 +133,7 @@ class VOTableGenerator(Task):
                     )
                 catalog["simulation"].extend(batch["simulation"].to_pylist())
                 catalog["snapshot"].extend(batch["snapshot"].to_pylist())
-                catalog["subhalo id"].extend(batch["subhalo_id"].to_pylist())
+                catalog["subhalo_id"].extend(batch["subhalo_id"].to_pylist())
 
             catalog["x"].extend(latent_position[:, 0])
             catalog["y"].extend(latent_position[:, 1])
@@ -138,6 +142,35 @@ class VOTableGenerator(Task):
             catalog["DEC2000"].extend(90.0 - angles[:, 0])
 
         return pd.DataFrame(catalog)
+
+    def __images_to_jpg(self, batch) -> None:
+        """Store images as jpg files."""
+
+        df = batch.to_pandas()
+        for i in range(len(df)):
+            image = (
+                np.array(df[self.data_column][i])
+                .reshape(3, 128, 128)
+                .transpose(1, 2, 0)
+                * 255
+            )
+            image = Image.fromarray(image.astype(np.uint8), "RGB")
+            os.makedirs(
+                os.path.join(
+                    self.root_path,
+                    df["simulation"][i],
+                    df["snapshot"][i],
+                ),
+                exist_ok=True,
+            )
+            image.save(
+                os.path.join(
+                    self.root_path,
+                    df["simulation"][i],
+                    df["snapshot"][i],
+                    df["subhalo_id"][i] + ".jpg",
+                )
+            )
 
     def execute(self) -> None:
         print(f"Executing task: {self.name}")

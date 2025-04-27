@@ -1,7 +1,6 @@
 __pycache__
 .venv*/
 *.ckpt
-*.parquet
 *.vot
 dist/
 HiPSter/

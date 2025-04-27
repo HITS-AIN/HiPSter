@@ -1,13 +1,25 @@
 import numpy as np
+from sympy import root
 
 from hipster import Inference, VOTableGenerator
 
 
-def test_catalog_generator():
+def test_catalog_generator_image(tmp_path):
+
+    VOTableGenerator(
+        encoder=Inference("tests/models/illustris_encoder.onnx"),
+        data_directory="tests/data/illustris",
+        dataset="illustris",
+        data_column="data",
+        root_path=tmp_path,
+    ).execute()
+
+
+def test_catalog_generator_spectra():
 
     votable_generator = VOTableGenerator(
         encoder=Inference("tests/models/gaia_encoder.onnx", input_name="l_x_"),
-        data_directory="tests/data/XpSampledMeanSpectrum",
+        data_directory="tests/data/gaia",
         dataset="gaia",
         data_column="flux",
     )
