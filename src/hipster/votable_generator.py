@@ -1,5 +1,6 @@
 import math
 import os
+from typing import Optional
 
 import healpy
 import numpy as np
@@ -107,7 +108,8 @@ class VOTableGenerator(Task):
                     )
 
             if self.dataset == "illustris":
-                self.__images_to_jpg(batch)
+                self.__images_to_jpg(batch.to_pandas(), "images")
+                self.__images_to_jpg(batch.to_pandas(), "thumbnails", size=64)
 
             latent_position = self.encoder(data)
 
@@ -143,10 +145,11 @@ class VOTableGenerator(Task):
 
         return pd.DataFrame(catalog)
 
-    def __images_to_jpg(self, batch) -> None:
+    def __images_to_jpg(
+        self, df: pd.DataFrame, output_path: str, size: Optional[int] = None
+    ) -> None:
         """Store images as jpg files."""
 
-        df = batch.to_pandas()
         for i in range(len(df)):
             image = (
                 np.array(df[self.data_column][i])
@@ -155,9 +158,12 @@ class VOTableGenerator(Task):
                 * 255
             )
             image = Image.fromarray(image.astype(np.uint8), "RGB")
+            if size:
+                image = image.resize((size, size))
             os.makedirs(
                 os.path.join(
                     self.root_path,
+                    output_path,
                     df["simulation"][i],
                     df["snapshot"][i],
                 ),
@@ -166,6 +172,7 @@ class VOTableGenerator(Task):
             image.save(
                 os.path.join(
                     self.root_path,
+                    output_path,
                     df["simulation"][i],
                     df["snapshot"][i],
                     df["subhalo_id"][i] + ".jpg",
