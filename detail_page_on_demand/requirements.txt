@@ -1,2 +1,2 @@
-onnxruntime==1.21.0
+onnxruntime==1.21.1
 gaiaxpy==2.1.2
