@@ -26,7 +26,7 @@ astropy = "^6.1.7"
 gaiaxpy = "^2.1.2"
 healpy = "^1.18"
 jsonargparse = {extras = ["omegaconf"], version = "^4.37"}
-matplotlib = "^3.10.0"
+matplotlib = "^3.10.3"
 onnxruntime-gpu = "^1.21"
 pandas = "^2.2.3"
 pyarrow = "^20.0"
