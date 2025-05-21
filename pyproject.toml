@@ -22,7 +22,7 @@ include = [
 hipster = 'hipster.main:main'
 
 [tool.poetry.dependencies]
-astropy = "^6.1.7"
+astropy = "^6.1.7" # version 7 doesn't support python 3.10
 gaiaxpy = "^2.1.2"
 healpy = "^1.18"
 jsonargparse = {extras = ["omegaconf"], version = "^4.37"}
