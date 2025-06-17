@@ -47,6 +47,53 @@ wheels = [
 ]
 
 [[package]]
+name = "astro-hipster"
+version = "0.1.0"
+source = { editable = "." }
+dependencies = [
+    { name = "astropy", version = "6.1.7", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "astropy", version = "7.1.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "gaiaxpy" },
+    { name = "healpy" },
+    { name = "jinja2" },
+    { name = "jsonargparse", extra = ["omegaconf"] },
+    { name = "matplotlib" },
+    { name = "onnxruntime-gpu" },
+    { name = "pandas" },
+    { name = "pyarrow" },
+    { name = "scipy" },
+    { name = "streamlit" },
+    { name = "tqdm" },
+]
+
+[package.optional-dependencies]
+dev = [
+    { name = "ipykernel" },
+    { name = "pytest" },
+    { name = "ruff" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "astropy", specifier = ">=6.1" },
+    { name = "gaiaxpy", specifier = ">=2.1" },
+    { name = "healpy", specifier = ">=1.18" },
+    { name = "ipykernel", marker = "extra == 'dev'", specifier = ">=6.29" },
+    { name = "jinja2", specifier = ">3.1" },
+    { name = "jsonargparse", extras = ["omegaconf"], specifier = ">=4.37" },
+    { name = "matplotlib", specifier = ">=3.10" },
+    { name = "onnxruntime-gpu", specifier = ">=1.21" },
+    { name = "pandas", specifier = ">2.2" },
+    { name = "pyarrow", specifier = ">=20.0" },
+    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.3" },
+    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.11" },
+    { name = "scipy", specifier = ">1.15" },
+    { name = "streamlit", specifier = ">=1.44" },
+    { name = "tqdm", specifier = ">=4.67" },
+]
+provides-extras = ["dev"]
+
+[[package]]
 name = "astropy"
 version = "6.1.7"
 source = { registry = "https://pypi.org/simple" }
@@ -741,53 +788,6 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/e8/89/c3788db2829dd0b66ca7a4150c8dbcf4fbac7fc5adca7a4ae6345df4e018/healpy-1.18.1-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:78e74f7bcdad267e1466c7f2ed1992d647713ada175cc5deed6a106d0188d46c", size = 8706794 },
     { url = "https://files.pythonhosted.org/packages/4a/72/d47179dc45eeb703d96e2d2cea4fd52d823d91223a4334f5af7d4ecb57e9/healpy-1.18.1-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:6f8f2b0a0e812109fafced5e7033d4cbd4dff1a50a0d5c55e8fc5ccc75b5bdd9", size = 8831568 },
 ]
-
-[[package]]
-name = "hipster"
-version = "0.1.0"
-source = { editable = "." }
-dependencies = [
-    { name = "astropy", version = "6.1.7", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
-    { name = "astropy", version = "7.1.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
-    { name = "gaiaxpy" },
-    { name = "healpy" },
-    { name = "jinja2" },
-    { name = "jsonargparse", extra = ["omegaconf"] },
-    { name = "matplotlib" },
-    { name = "onnxruntime-gpu" },
-    { name = "pandas" },
-    { name = "pyarrow" },
-    { name = "scipy" },
-    { name = "streamlit" },
-    { name = "tqdm" },
-]
-
-[package.optional-dependencies]
-dev = [
-    { name = "ipykernel" },
-    { name = "pytest" },
-    { name = "ruff" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "astropy", specifier = ">=6.1" },
-    { name = "gaiaxpy", specifier = ">=2.1" },
-    { name = "healpy", specifier = ">=1.18" },
-    { name = "ipykernel", marker = "extra == 'dev'", specifier = ">=6.29" },
-    { name = "jinja2", specifier = ">3.1" },
-    { name = "jsonargparse", extras = ["omegaconf"], specifier = ">=4.37" },
-    { name = "matplotlib", specifier = ">=3.10" },
-    { name = "onnxruntime-gpu", specifier = ">=1.21" },
-    { name = "pandas", specifier = ">2.2" },
-    { name = "pyarrow", specifier = ">=20.0" },
-    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.3" },
-    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.11" },
-    { name = "scipy", specifier = ">1.15" },
-    { name = "streamlit", specifier = ">=1.44" },
-    { name = "tqdm", specifier = ">=4.67" },
-]
-provides-extras = ["dev"]
 
 [[package]]
 name = "html5lib"

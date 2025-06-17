@@ -1,5 +1,5 @@
 [project]
-name = "hipster"
+name = "astro-hipster"
 version = "0.1.0"
 description = "Generate HiPS representation"
 authors = [
