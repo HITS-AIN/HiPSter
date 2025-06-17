@@ -7,7 +7,6 @@ from .inference import Inference
 
 
 class ImageGenerator:
-
     def __init__(
         self,
         encoder: Inference,
@@ -51,16 +50,12 @@ class ImageGenerator:
         # Reshape the data if the shape is stored in the metadata.
         metadata_shape = b"flux_shape"
         self.shape = None
-        if (
-            self.dataset.schema.metadata
-            and metadata_shape in self.dataset.schema.metadata
-        ):
+        if self.dataset.schema.metadata and metadata_shape in self.dataset.schema.metadata:
             shape_string = self.dataset.schema.metadata[metadata_shape].decode("utf8")
             shape = shape_string.replace("(", "").replace(")", "").split(",")
             self.shape = tuple(map(int, shape))
 
     def __call__(self):
-
         for batch in self.dataset.to_batches(batch_size=self.batch_size):
             flux = batch["flux"].flatten().to_numpy()
             if self.shape:

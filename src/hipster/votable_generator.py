@@ -17,7 +17,6 @@ from .task import Task
 
 
 class VOTableGenerator(Task):
-
     def __init__(
         self,
         encoder: Inference,
@@ -91,21 +90,12 @@ class VOTableGenerator(Task):
             shape = tuple(map(int, shape))
 
         for batch in dataset.to_batches(batch_size=self.batch_size):
-            data = (
-                batch[self.data_column]
-                .flatten()
-                .to_numpy()
-                .reshape(-1, *shape)
-                .copy()
-                .astype(np.float32)
-            )
+            data = batch[self.data_column].flatten().to_numpy().reshape(-1, *shape).copy().astype(np.float32)
 
             # Normalize the data
             for i in range(data.shape[0]):  # batches
                 for j in range(data.shape[1]):  # channels
-                    data[i][j] = (data[i][j] - data[i][j].min()) / (
-                        data[i][j].max() - data[i][j].min()
-                    )
+                    data[i][j] = (data[i][j] - data[i][j].min()) / (data[i][j].max() - data[i][j].min())
 
             if self.dataset == "illustris":
                 self.__images_to_jpg(batch.to_pandas(), "images")
@@ -145,18 +135,11 @@ class VOTableGenerator(Task):
 
         return pd.DataFrame(catalog)
 
-    def __images_to_jpg(
-        self, df: pd.DataFrame, output_path: str, size: Optional[int] = None
-    ) -> None:
+    def __images_to_jpg(self, df: pd.DataFrame, output_path: str, size: Optional[int] = None) -> None:
         """Store images as jpg files."""
 
         for i in range(len(df)):
-            image = (
-                np.array(df[self.data_column][i])
-                .reshape(3, 128, 128)
-                .transpose(1, 2, 0)
-                * 255
-            )
+            image = np.array(df[self.data_column][i]).reshape(3, 128, 128).transpose(1, 2, 0) * 255
             image = Image.fromarray(image.astype(np.uint8), "RGB")
             if size:
                 image = image.resize((size, size))

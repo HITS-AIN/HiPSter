@@ -27,11 +27,7 @@ class HTMLGenerator:
         self._votables = []
         self._catalogs = []
 
-        self._environment = Environment(
-            loader=FileSystemLoader(
-                os.path.join(os.path.dirname(__file__), "templates")
-            )
-        )
+        self._environment = Environment(loader=FileSystemLoader(os.path.join(os.path.dirname(__file__), "templates")))
 
     @dataclass
     class ImageLayer:
@@ -75,7 +71,5 @@ class HTMLGenerator:
             aladin_lite_version=self._aladin_lite_version,
         )
         os.makedirs(self.root_path, exist_ok=True)
-        with open(
-            os.path.join(self.root_path, "index.html"), "w", encoding="utf-8"
-        ) as f:
+        with open(os.path.join(self.root_path, "index.html"), "w", encoding="utf-8") as f:
             f.write(html)

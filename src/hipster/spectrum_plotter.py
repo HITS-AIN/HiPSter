@@ -9,7 +9,6 @@ matplotlib.use("Agg")
 
 
 class SpectrumPlotter:
-
     def __init__(
         self,
         wavelengths: Range,
@@ -47,12 +46,9 @@ class SpectrumPlotter:
         norm = plt.Normalize(*self.clim)
         wl = np.arange(self.clim[0], self.clim[1] + 1, 2)
         colorlist = list(zip(norm(wl), [wavelength_to_rgb(w) for w in wl]))
-        self.spectralmap = matplotlib.colors.LinearSegmentedColormap.from_list(
-            "spectrum", colorlist
-        )
+        self.spectralmap = matplotlib.colors.LinearSegmentedColormap.from_list("spectrum", colorlist)
 
     def __call__(self, data: np.ndarray) -> np.ndarray:
-
         if data.ndim == 2:
             assert data.shape[0] == 1, "multi channel spectrum not supported"
             data = data[0]
@@ -83,13 +79,9 @@ class SpectrumPlotter:
             np.max(y),
         )
 
-        ax.imshow(
-            X, clim=self.clim, extent=extent, cmap=self.spectralmap, aspect="auto"
-        )
+        ax.imshow(X, clim=self.clim, extent=extent, cmap=self.spectralmap, aspect="auto")
         # Fill the area above the spectrum with white. Add 10% to avoid artifacts in the image.
-        ax.fill_between(
-            self.wavelengths, data, spectrum_max * 1.1, color=background_color
-        )
+        ax.fill_between(self.wavelengths, data, spectrum_max * 1.1, color=background_color)
 
         if self.ylim:
             ax.set_ylim(self.ylim)
@@ -100,9 +92,7 @@ class SpectrumPlotter:
         else:
             ax.axis("off")
 
-        plt.subplots_adjust(
-            0 + self.margin, 0 + self.margin, 1 - self.margin, 1 - self.margin, 0, 0
-        )
+        plt.subplots_adjust(0 + self.margin, 0 + self.margin, 1 - self.margin, 1 - self.margin, 0, 0)
 
         canvas = fig.canvas
         canvas.draw_idle()

@@ -18,7 +18,6 @@ from .task import Task
 
 
 class HiPSGenerator(Task):
-
     def __init__(
         self,
         decoder: Inference,
@@ -63,9 +62,7 @@ class HiPSGenerator(Task):
         for j in range_j:
             vectors = np.zeros((self.hierarchy**2, 3), dtype=np.float32)
             for sub in range(self.hierarchy**2):
-                vectors[sub] = healpy.pix2vec(
-                    2**i * self.hierarchy, j * self.hierarchy**2 + sub, nest=True
-                )
+                vectors[sub] = healpy.pix2vec(2**i * self.hierarchy, j * self.hierarchy**2 + sub, nest=True)
             recon = self.decoder(vectors)
             image = self.generate_tile(recon, i, j, self.hierarchy, 0)
             image = Image.fromarray(image)
@@ -102,15 +99,9 @@ class HiPSGenerator(Task):
             return self.image_maker(data[index])
 
         q1 = self.generate_tile(data, order + 1, pixel * 4, hierarchy / 2, index * 4)
-        q2 = self.generate_tile(
-            data, order + 1, pixel * 4 + 1, hierarchy / 2, index * 4 + 1
-        )
-        q3 = self.generate_tile(
-            data, order + 1, pixel * 4 + 2, hierarchy / 2, index * 4 + 2
-        )
-        q4 = self.generate_tile(
-            data, order + 1, pixel * 4 + 3, hierarchy / 2, index * 4 + 3
-        )
+        q2 = self.generate_tile(data, order + 1, pixel * 4 + 1, hierarchy / 2, index * 4 + 1)
+        q3 = self.generate_tile(data, order + 1, pixel * 4 + 2, hierarchy / 2, index * 4 + 2)
+        q4 = self.generate_tile(data, order + 1, pixel * 4 + 3, hierarchy / 2, index * 4 + 3)
         result = np.ndarray((q1.shape[0] * 2, q1.shape[1] * 2, 3), dtype=np.uint8)
         result[: q1.shape[0], : q1.shape[1]] = q1
         result[q1.shape[0] :, : q1.shape[1]] = q2
@@ -120,9 +111,7 @@ class HiPSGenerator(Task):
 
     def write_properties(self) -> None:
         """Writes the properties of the HiPS data to a file."""
-        with open(
-            os.path.join(self.output_path, "properties"), "w", encoding="utf-8"
-        ) as f:
+        with open(os.path.join(self.output_path, "properties"), "w", encoding="utf-8") as f:
             f.write(
                 f"""
 creator_did          = ivo://HITS/hipster

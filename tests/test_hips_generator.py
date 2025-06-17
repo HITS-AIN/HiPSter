@@ -5,7 +5,6 @@ from hipster import HiPSGenerator, ImagePlotter, Inference, Range, SpectrumPlott
 
 @pytest.mark.parametrize("hierarchy", [1, 2])
 def test_hips_generator_image(tmp_path, hierarchy):
-
     HiPSGenerator(
         decoder=Inference("tests/models/illustris_decoder.onnx"),
         image_maker=ImagePlotter(),
@@ -17,7 +16,6 @@ def test_hips_generator_image(tmp_path, hierarchy):
 
 @pytest.mark.parametrize("hierarchy", [1, 2])
 def test_hips_generator_spectra(tmp_path, hierarchy):
-
     HiPSGenerator(
         decoder=Inference("tests/models/gaia_decoder.onnx", input_name="l_x_"),
         image_maker=SpectrumPlotter(

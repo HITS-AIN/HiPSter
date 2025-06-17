@@ -19,12 +19,8 @@ def main():
     parser.add_argument("--config", action="config", help="Path to the config file.")
     parser.add_argument("--root_path", type=str, default="./HiPSter")
     parser.add_argument("--only_html", action="store_true", help="Only generate HTML.")
-    parser.add_argument(
-        "--verbose", "-v", default=0, action="count", help="Print level."
-    )
-    parser.add_argument(
-        "--overwrite", action="store_true", help="Overwrite existing files."
-    )
+    parser.add_argument("--verbose", "-v", default=0, action="count", help="Print level.")
+    parser.add_argument("--overwrite", action="store_true", help="Overwrite existing files.")
     parser.link_arguments("root_path", "html.root_path")
     parser.link_arguments("root_path", "tasks.init_args.root_path")
 

@@ -9,7 +9,6 @@ matplotlib.use("Agg")
 
 
 class AbsorptionLinePlotter:
-
     def __init__(
         self,
         wavelengths: Range,
@@ -41,7 +40,6 @@ class AbsorptionLinePlotter:
         self.flip = flip
 
     def __call__(self, data: np.ndarray) -> np.ndarray:
-
         if data.ndim == 2:
             assert data.shape[0] == 1, "multi channel spectrum not supported"
             data = data[0]
@@ -71,9 +69,7 @@ class AbsorptionLinePlotter:
         ax.imshow(spectrum_image_rgb, origin="lower", aspect="auto")
         ax.axis("off")
 
-        plt.subplots_adjust(
-            0 + self.margin, 0 + self.margin, 1 - self.margin, 1 - self.margin, 0, 0
-        )
+        plt.subplots_adjust(0 + self.margin, 0 + self.margin, 1 - self.margin, 1 - self.margin, 0, 0)
 
         canvas = fig.canvas
         canvas.draw_idle()

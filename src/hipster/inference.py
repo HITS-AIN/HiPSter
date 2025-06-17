@@ -5,7 +5,6 @@ import onnxruntime as ort
 
 
 class Inference:
-
     def __init__(
         self,
         model_path: str | os.PathLike,

@@ -10,7 +10,6 @@ from gaiaxpy import calibrate
 
 
 class PlotRequestHandler(BaseHTTPRequestHandler):
-
     def __init__(self, *args, **kwargs):
         figsize_in_pixel = (1600, 1200)
         self.dpi = 200
@@ -25,17 +24,13 @@ class PlotRequestHandler(BaseHTTPRequestHandler):
 
     def __generate_plot(self, index) -> str:
         try:
-            calibrated_spectrum, _ = calibrate(
-                [index], sampling=np.arange(336, 1021, 2), save_file=False
-            )
+            calibrated_spectrum, _ = calibrate([index], sampling=np.arange(336, 1021, 2), save_file=False)
         except ValueError:
             return f"""<html><body><h1>Error: No continuous raw data found for the given
                    source index {index}.</h1></body></html>"""
 
         # Add dummy entry to the end of the flux and flux_error columns to make it divisible by 4
-        calibrated_spectrum["flux"] = calibrated_spectrum["flux"].apply(
-            lambda x: np.append(x, x[-1])
-        )
+        calibrated_spectrum["flux"] = calibrated_spectrum["flux"].apply(lambda x: np.append(x, x[-1]))
 
         flux = calibrated_spectrum["flux"][0].astype(np.float32).reshape(-1, 1, 344)
         for i, x in enumerate(flux):

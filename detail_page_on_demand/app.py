@@ -21,9 +21,7 @@ model_path = file_selector("/home/doserbd/gaia/")
 # source_index = 38655544960
 source_index = st.query_params["index"]
 
-calibrated_spectrum, sampling = calibrate(
-    [source_index], sampling=np.arange(336, 1021, 2), save_file=False
-)
+calibrated_spectrum, sampling = calibrate([source_index], sampling=np.arange(336, 1021, 2), save_file=False)
 
 flux = calibrated_spectrum["flux"][0].astype(np.float32).reshape(-1, 1, 343)
 flux_error = calibrated_spectrum["flux_error"][0].astype(np.float32).reshape(-1, 1, 343)

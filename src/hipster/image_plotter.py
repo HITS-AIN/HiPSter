@@ -2,7 +2,6 @@ import numpy as np
 
 
 class ImagePlotter:
-
     def __init__(
         self,
         flip: bool = False,
@@ -16,7 +15,6 @@ class ImagePlotter:
         self.flip = flip
 
     def __call__(self, data: np.ndarray) -> np.ndarray:
-
         # Store the size of the image for the HiPS property file
         self.figsize_in_pixel = data.shape[1]
 
