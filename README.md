@@ -22,7 +22,7 @@ and a catalog that can be visualized interactively on the surface of a sphere us
 ## Installation
 
 ```bash
-pip install git+https://github.com/HITS-AIN/HiPSter
+pip install astro-hipster
 ```
 
 ## Usage
