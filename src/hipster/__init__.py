@@ -11,7 +11,7 @@ from .spectrum_plotter import SpectrumPlotter
 from .task import Task
 from .votable_generator import VOTableGenerator
 
-__version__ = importlib.metadata.version("hipster")
+__version__ = importlib.metadata.version("astro-hipster")
 __all__ = [
     "AbsorptionLinePlotter",
     "HiPSGenerator",
