@@ -1,64 +1,51 @@
-[tool.poetry]
+[project]
 name = "hipster"
 version = "0.1.0"
-description = "Create HiPS tiles from PyTorch models"
+description = "Generate HiPS representation"
 authors = [
-    "Kai Polsterer <kai.polsterer@h-its.org>",
-    "Bernd Doser <bernd.doser@h-its.org>",
-    "Andreas Fehlner <andreas.fehlner@h-its.org>",
-    "Sebastian T. Gomez <sebastian.trujillogomez@h-its.org>",
+  {name = "Kai Polsterer", email = "kai.polsterer@h-its.org"},
+  {name = "Bernd Doser", email = "bernd.doser@h-its.org"},
+  {name = "Andreas Fehlner", email = "andreas.fehlner@h-its.org"},
+  {name = "Sebastian T. Gomez", email = "sebastian.trujillogomez@h-its.org"},
 ]
 license = "Apache-2.0"
 readme = "README.md"
-repository = "https://github.com/HITS-AIN/hipster"
-packages = [
-    { include = "hipster", from = "src" },
-]
-include = [
-    { path = "tests", format = "sdist" },
+
+requires-python = ">=3.10,<4.0"
+dependencies = [
+    "astropy>=6.1", # version 7 doesn't support python 3.10
+    "gaiaxpy>=2.1",
+    "healpy>=1.18",
+    "jsonargparse[omegaconf]>=4.37",
+    "matplotlib>=3.10",
+    "onnxruntime-gpu>=1.21",
+    "pandas>2.2",
+    "pyarrow>=20.0",
+    "scipy>1.15",
+    "tqdm>=4.67",
+    "jinja2>3.1",
+    "streamlit>=1.44",
 ]
 
-[tool.poetry.scripts]
+[project.optional-dependencies]
+dev = [
+    "ipykernel >=6.29",
+    "pytest >=8.3",
+    "ruff >=0.11",
+]
+
+[project.scripts]
 hipster = 'hipster.main:main'
 
-[tool.poetry.dependencies]
-astropy = "^6.1.7" # version 7 doesn't support python 3.10
-gaiaxpy = "^2.1.2"
-healpy = "^1.18"
-jsonargparse = {extras = ["omegaconf"], version = "^4.37"}
-matplotlib = "^3.10.0"
-onnxruntime-gpu = "^1.21"
-pandas = "^2.2.3"
-pyarrow = "^20.0"
-python = ">=3.10,<4.0"
-scipy = "^1.15.1"
-tqdm = "^4.67.1"
-jinja2 = "^3.1.6"
-streamlit = "^1.44.1"
-
-[tool.poetry.group.dev.dependencies]
-black = "^25.1.0"
-flake8 = "^7.2"
-ipykernel = "^6.29.5"
-pytest = "^8.3.4"
-
-[[tool.poetry.source]]
-name = "pypi"
-priority = "primary"
-
-[[tool.poetry.source]]
-name = "pytorch-nightly-cu121"
-url = "https://download.pytorch.org/whl/nightly/cu121"
-priority = "explicit"
-
-[[tool.poetry.source]]
-name = "testpypi"
-url = "https://test.pypi.org/simple/"
-priority = "explicit"
-
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10
 
 [tool.pytest]
 timeout = 300
@@ -76,3 +63,9 @@ filterwarnings = [
 
 [tool.pylint.TYPECHECK]
 generated-members = 'numpy.*, torch.*'
+
+[[tool.uv.index]]
+name = "testpypi"
+url = "https://test.pypi.org/simple/"
+publish-url = "https://test.pypi.org/legacy/"
+explicit = true

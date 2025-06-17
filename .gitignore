@@ -1,8 +1,9 @@
 __pycache__
 .venv*/
 *.ckpt
+*.egg-info/
 *.vot
 dist/
+examples/config_work.yaml
 HiPSter/
 output/
-examples/config_work.yaml
