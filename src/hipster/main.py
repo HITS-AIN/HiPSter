@@ -40,6 +40,9 @@ def main():
         for task in cfg.tasks:
             print(f"  - {task.__class__.__name__}")
 
+    if cfg.tasks is None:
+        exit("No tasks provided. Please specify tasks to execute.")
+
     os.makedirs(cfg.root_path, exist_ok=cfg.overwrite)
 
     # Execute tasks

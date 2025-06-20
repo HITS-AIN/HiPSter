@@ -18,7 +18,7 @@ st.title("HiPSter: Gaia XP DR3")
 model_path = file_selector("/home/doserbd/gaia/")
 # st.write(f"You selected {model_path}")
 
-try :
+try:
     source_index = int(st.query_params["index"])
 except (KeyError, ValueError):
     st.error("Please provide a valid source index in the query parameters, e.g., ?index=38655544960")
