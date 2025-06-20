@@ -4,6 +4,7 @@ import os
 
 from jsonargparse import ArgumentParser
 
+import hipster
 from hipster import HTMLGenerator, Task
 
 
@@ -21,11 +22,16 @@ def main():
     parser.add_argument("--only_html", action="store_true", help="Only generate HTML.")
     parser.add_argument("--verbose", "-v", default=0, action="count", help="Print level.")
     parser.add_argument("--overwrite", action="store_true", help="Overwrite existing files.")
+    parser.add_argument("--version", action="store_true", help="Print version and exit.")
     parser.link_arguments("root_path", "html.root_path")
     parser.link_arguments("root_path", "tasks.init_args.root_path")
 
     cfg = parser.parse_args()
     cfg = parser.instantiate_classes(cfg)
+
+    if cfg.version:
+        print(f"HiPSter version: {hipster.__version__}")
+        return
 
     # Print list of tasks
     if cfg.verbose:
