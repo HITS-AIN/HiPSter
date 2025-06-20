@@ -18,8 +18,12 @@ st.title("HiPSter: Gaia XP DR3")
 model_path = file_selector("/home/doserbd/gaia/")
 # st.write(f"You selected {model_path}")
 
-# source_index = 38655544960
-source_index = st.query_params["index"]
+try :
+    source_index = int(st.query_params["index"])
+except (KeyError, ValueError):
+    st.error("Please provide a valid source index in the query parameters, e.g., ?index=38655544960")
+    st.stop()
+
 
 calibrated_spectrum, sampling = calibrate([source_index], sampling=np.arange(336, 1021, 2), save_file=False)
 
