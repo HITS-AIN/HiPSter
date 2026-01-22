@@ -50,12 +50,10 @@ line-length = 120
 [tool.ruff.lint.mccabe]
 max-complexity = 10
 
-[tool.pytest]
-timeout = 300
-testpaths = 'tests'
-xfail_strict = true
-
 [tool.pytest.ini_options]
+timeout = 300
+testpaths = ["tests"]
+xfail_strict = true
 filterwarnings = [
     "ignore::DeprecationWarning",
     "ignore:The 'train_dataloader' does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument",
