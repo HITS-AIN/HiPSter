@@ -28,6 +28,7 @@ class HiPSGenerator(Task):
         max_order: int = 1,
         hips_id: str = "",
         hips_name: str = "",
+        distortion_correction: bool = True,
         **kwargs,
     ):
         """Generates a HiPS tiling following the standard defined in
@@ -42,6 +43,7 @@ class HiPSGenerator(Task):
             max_order (int, optional): Maximum order of the HiPS tiling. Defaults to 1.
             hips_id (str, optional): HiPS ID. Defaults to "".
             hips_name (str, optional): HiPS name. Defaults to "".
+            distortion_correction (bool, optional): Correction of the distortion of the HiPS tiles. Defaults to True.
         """
         super().__init__("HiPSGenerator", **kwargs)
         self.decoder = decoder
@@ -53,6 +55,7 @@ class HiPSGenerator(Task):
         self.max_order = max_order
         self.hips_id = hips_id
         self.hips_name = hips_name
+        self.distortion_correction = distortion_correction
 
     def __create_hips_tile(
         self,
@@ -93,10 +96,47 @@ class HiPSGenerator(Task):
                 path3 = path2 / f"Dir{j * 10000}"
                 path3.mkdir(parents=True, exist_ok=True)
 
+    def __calculate_pixels(self, matrix, pixel):
+        """Calculates the pixel values for the HiPS tiling."""
+        size = matrix.shape[0]
+        if size > 1:
+            matrix[:size//2,:size//2] = self.__calculate_pixels(matrix[:size//2,:size//2], pixel*4)
+            matrix[size//2:,:size//2] = self.__calculate_pixels(matrix[size//2:,:size//2], pixel*4+1)
+            matrix[:size//2,size//2:] = self.__calculate_pixels(matrix[:size//2,size//2:], pixel*4+2)
+            matrix[size//2:,size//2:] = self.__calculate_pixels(matrix[size//2:,size//2:], pixel*4+3)
+        else:
+            matrix = pixel
+        return matrix
+
+    def __correct_distortion(self, data, order, pixel):
+        """Corrects the distortion of the HiPS tiles."""
+        size = data.shape[0]
+        result = np.zeros((size, size, 3), dtype=np.uint8)
+        healpix_pixel = np.zeros((size, size), dtype=np.int64)
+        healpix_pixel = self.__calculate_pixels(healpix_pixel, pixel)
+        center_theta, center_phi = healpy.pix2ang(2**order, pixel, nest=True) # theta 0...180 phi 0...360
+        max_theta = max_phi = 2*math.pi / (4 * 2**order) / 2
+        for x in range(size):
+            for y in range(size):
+                target_theta, target_phi = healpy.pix2ang(2**order*size, healpix_pixel[x,y], nest=True)
+                delta_theta = target_theta - center_theta
+                if center_phi == 0 and target_phi > math.pi:
+                    delta_phi = (target_phi-center_phi-2*math.pi) * math.sin(target_theta)
+                else:
+                    delta_phi = (target_phi-center_phi) * math.sin(target_theta)
+                target_x = int(size//2+delta_phi/max_phi*(size//2-1))
+                target_y = int(size//2+delta_theta/max_theta*(size//2-1))
+                if target_x >= 0 and target_y >=0 and target_x < size and target_y < size:
+                    result[x,y] = data[target_x, target_y]
+        return result
+
     def generate_tile(self, data, order, pixel, hierarchy, index):
         """Construct the hierarchical tiling of the HiPS."""
         if hierarchy <= 1:
-            return self.image_maker(data[index])
+            image = self.image_maker(data[index])
+            if self.distortion_correction:
+                image = self.__correct_distortion(image, order, pixel)
+            return image
 
         q1 = self.generate_tile(data, order + 1, pixel * 4, hierarchy / 2, index * 4)
         q2 = self.generate_tile(data, order + 1, pixel * 4 + 1, hierarchy / 2, index * 4 + 1)
