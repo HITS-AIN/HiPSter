@@ -12,6 +12,7 @@ from PIL import Image
 
 from hipster.html_generator import HTMLGenerator
 
+from .distortion_correction import correct_distortion
 from .inference import Inference
 from .task import Task
 
@@ -82,9 +83,7 @@ class DatasetProjection(Task):
 
     def __write_properties(self) -> None:
         """Writes the properties of the HiPS data to a file."""
-        with open(
-            os.path.join(self.output_path, "properties"), "w", encoding="utf-8"
-        ) as f:
+        with open(os.path.join(self.output_path, "properties"), "w", encoding="utf-8") as f:
             f.write(f"""
 creator_did          = ivo://HITS/hipster
 obs_title            = {self.hips_name}
@@ -132,21 +131,14 @@ hips_frame           = equatorial
                 data = np.swapaxes(data, 0, 2)
             else:
                 vector = healpy.pix2vec(2**order, pixel, nest=True)
-                distances = np.sum(
-                    np.square(catalog[np.array(idx)][:, 4:7] - vector), axis=1
-                )
+                distances = np.sum(np.square(catalog[np.array(idx)][:, 4:7] - vector), axis=1)
                 best = idx[np.argmin(distances)]
                 data = dataset[int(catalog[best][0])]["image"]
-                data = functional.rotate(data, catalog[best][3], expand=False)
-                data = functional.center_crop(
-                    data, [self.crop_size, self.crop_size]
-                )  # crop
-                data = self.__project_data(data, order, pixel)
+                if self.distortion_correction:
+                    data = correct_distortion(data, order, pixel)
             return data
-        healpix_cells = self.__calculate_healpix_cells(
-            catalog, idx, order + 1, range(pixel * 4, pixel * 4 + 4)
-        )
-        q1 = self.embed_tile(
+        healpix_cells = self.__calculate_healpix_cells(catalog, idx, order + 1, range(pixel * 4, pixel * 4 + 4))
+        q1 = self.__embed_tile(
             dataset,
             catalog,
             order + 1,
@@ -154,7 +146,7 @@ hips_frame           = equatorial
             hierarchy / 2,
             healpix_cells[pixel * 4],
         )
-        q2 = self.embed_tile(
+        q2 = self.__embed_tile(
             dataset,
             catalog,
             order + 1,
@@ -162,7 +154,7 @@ hips_frame           = equatorial
             hierarchy / 2,
             healpix_cells[pixel * 4 + 1],
         )
-        q3 = self.embed_tile(
+        q3 = self.__embed_tile(
             dataset,
             catalog,
             order + 1,
@@ -170,7 +162,7 @@ hips_frame           = equatorial
             hierarchy / 2,
             healpix_cells[pixel * 4 + 2],
         )
-        q4 = self.embed_tile(
+        q4 = self.__embed_tile(
             dataset,
             catalog,
             order + 1,
@@ -187,12 +179,8 @@ hips_frame           = equatorial
 
     def __create_embeded_tile(self, dataset, catalog, healpix_cells, i, range_j):
         for j in range_j:
-            data = self.__embed_tile(
-                dataset, catalog, i, j, self.hierarchy, healpix_cells[j]
-            )
-            image = Image.fromarray(
-                (np.clip(data.detach().numpy(), 0, 1) * 255).astype(np.uint8)
-            )
+            data = self.__embed_tile(dataset, catalog, i, j, self.hierarchy, healpix_cells[j])
+            image = Image.fromarray((np.clip(data.detach().numpy(), 0, 1) * 255).astype(np.uint8))
             image.save(
                 os.path.join(
                     self.output_path,
@@ -219,15 +207,10 @@ hips_frame           = equatorial
         )  # id, RA2000, DEC2000, rotation, x, y, z
 
         for i in range(self.max_order + 1):
-
-            healpix_cells = self.__calculate_healpix_cells(
-                catalog, range(catalog.shape[0]), i, range(12 * 4**i)
-            )
+            healpix_cells = self.__calculate_healpix_cells(catalog, range(catalog.shape[0]), i, range(12 * 4**i))
 
             if self.number_of_workers == 1:
-                self.__create_embeded_tile(
-                    dataset, catalog, healpix_cells, i, range(12 * 4**i)
-                )
+                self.__create_embeded_tile(dataset, catalog, healpix_cells, i, range(12 * 4**i))
             else:
                 # process_map(_foo, range(0, 30), max_workers=2)
 
