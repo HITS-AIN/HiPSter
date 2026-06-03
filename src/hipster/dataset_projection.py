@@ -65,7 +65,7 @@ class DatasetProjection(Task):
         self.batch_size = batch_size
 
         dataset = ds.dataset(data_directory, format="parquet")
-        table = dataset.to_table(columns=[self.data_column])
+        table = dataset.take(5).to_table(columns=[self.data_column])
         self.num_rows = table.num_rows
         self.images = table[self.data_column]
 
@@ -79,9 +79,7 @@ class DatasetProjection(Task):
             images = []
             for item in batch[self.data_column]:
                 img_bytes = item["bytes"].as_py()
-                img = (
-                    Image.open(io.BytesIO(img_bytes)).convert("RGB").resize((128, 128))
-                )
+                img = Image.open(io.BytesIO(img_bytes)).convert("RGB").resize((128, 128))
                 images.append(np.array(img))
 
             data = np.stack(images)  # (N, 128, 128, 3)
@@ -113,9 +111,7 @@ class DatasetProjection(Task):
 
     def __write_properties(self) -> None:
         """Writes the properties of the HiPS data to a file."""
-        with open(
-            os.path.join(self.output_path, "properties"), "w", encoding="utf-8"
-        ) as f:
+        with open(os.path.join(self.output_path, "properties"), "w", encoding="utf-8") as f:
             f.write(f"""
 creator_did          = ivo://HITS/hipster
 obs_title            = {self.hips_name}
@@ -162,17 +158,13 @@ hips_frame           = equatorial
                 data = np.swapaxes(data, 0, 2)
             else:
                 vector = healpy.pix2vec(2**order, pixel, nest=True)
-                distances = np.sum(
-                    np.square(self.catalog[np.array(idx)] - vector), axis=1
-                )
+                distances = np.sum(np.square(self.catalog[np.array(idx)] - vector), axis=1)
                 best = idx[np.argmin(distances)]
                 data = self.images[int(self.catalog[best][0])].as_py()["bytes"]
                 if self.distortion_correction:
                     data = correct_distortion(data, order, pixel)
             return data
-        healpix_cells = self.__calculate_healpix_cells(
-            idx, order + 1, range(pixel * 4, pixel * 4 + 4)
-        )
+        healpix_cells = self.__calculate_healpix_cells(idx, order + 1, range(pixel * 4, pixel * 4 + 4))
         q1 = self.__embed_tile(
             order + 1,
             pixel * 4,
@@ -224,9 +216,7 @@ hips_frame           = equatorial
         self.__create_folders(self.max_order)
 
         for i in range(self.max_order + 1):
-            healpix_cells = self.__calculate_healpix_cells(
-                range(self.num_rows), i, range(12 * 4**i)
-            )
+            healpix_cells = self.__calculate_healpix_cells(range(self.num_rows), i, range(12 * 4**i))
 
             if self.number_of_workers == 1:
                 self.__create_embeded_tile(healpix_cells, i, range(12 * 4**i))
