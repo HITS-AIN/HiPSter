@@ -21,7 +21,6 @@ tasks:
       hips_name: Celebrities projection
       hips_path: projection
       distortion_correction: false
-      catalog_file: output/celebrities/celebrities.vot
 
   # - class_path: hipster.HiPSGenerator
   #   init_args:
