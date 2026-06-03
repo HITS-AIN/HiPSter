@@ -15,12 +15,12 @@ tasks:
       data_directory: /home/doserbd/celeb/data/train-00000-of-00001.parquet
       image_maker:
         class_path: hipster.ImagePlotter
-      max_order: 1
+      max_order: 4
       hierarchy: 4
       hips_id: Celebrities
       hips_name: Celebrities projection
       hips_path: projection
-      distortion_correction: false
+      distortion_correction: true
 
   # - class_path: hipster.HiPSGenerator
   #   init_args:

@@ -69,8 +69,9 @@ class DatasetProjection(Task):
         self.num_rows = table.num_rows
         self.images = table[self.data_column]
 
-        first_image = Image.open(io.BytesIO(self.images[0].as_py()["bytes"]))
-        self.image_size = first_image.size[0]  # assuming square images
+        # first_image = Image.open(io.BytesIO(self.images[0].as_py()["bytes"]))
+        # self.image_size = first_image.size[0]  # assuming square images
+        self.image_size = 128
 
         print("Calculating catalog...")
         self.catalog = []
@@ -79,7 +80,7 @@ class DatasetProjection(Task):
             images = []
             for item in batch[self.data_column]:
                 img_bytes = item["bytes"].as_py()
-                img = Image.open(io.BytesIO(img_bytes)).convert("RGB").resize((128, 128))
+                img = Image.open(io.BytesIO(img_bytes)).convert("RGB").resize((self.image_size, self.image_size))
                 images.append(np.array(img))
 
             data = np.stack(images)  # (N, 128, 128, 3)
@@ -160,9 +161,9 @@ hips_frame           = equatorial
                 vector = healpy.pix2vec(2**order, pixel, nest=True)
                 distances = np.sum(np.square(self.catalog[np.array(idx)] - vector), axis=1)
                 best = idx[np.argmin(distances)]
-                data = self.images[int(self.catalog[best][0])].as_py()["bytes"]
-                img = Image.open(io.BytesIO(data))
-                data = np.array(img)
+                data = self.images[best].as_py()["bytes"]
+                img = Image.open(io.BytesIO(data)).resize((self.image_size, self.image_size))
+                data = np.array(img) / 255.0
                 if self.distortion_correction:
                     data = correct_distortion(data, order, pixel)
             return data
