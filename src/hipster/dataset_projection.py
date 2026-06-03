@@ -65,7 +65,7 @@ class DatasetProjection(Task):
         self.batch_size = batch_size
 
         dataset = ds.dataset(data_directory, format="parquet")
-        table = dataset.take(5).to_table(columns=[self.data_column])
+        table = dataset.to_table(columns=[self.data_column])
         self.num_rows = table.num_rows
         self.images = table[self.data_column]
 
@@ -123,7 +123,7 @@ hips_status          = public master clonable
 hips_tile_format     = jpeg
 hips_order           = {self.max_order}
 hips_order_min       = 0
-hips_tile_width      = {self.hierarchy * self.image_maker.figsize_in_pixel}
+hips_tile_width      = {self.image_size}
 hips_frame           = equatorial
 """)
 
@@ -161,6 +161,8 @@ hips_frame           = equatorial
                 distances = np.sum(np.square(self.catalog[np.array(idx)] - vector), axis=1)
                 best = idx[np.argmin(distances)]
                 data = self.images[int(self.catalog[best][0])].as_py()["bytes"]
+                img = Image.open(io.BytesIO(data))
+                data = np.array(img)
                 if self.distortion_correction:
                     data = correct_distortion(data, order, pixel)
             return data
