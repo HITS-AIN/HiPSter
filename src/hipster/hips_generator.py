@@ -100,10 +100,10 @@ class HiPSGenerator(Task):
         """Calculates the pixel values for the HiPS tiling."""
         size = matrix.shape[0]
         if size > 1:
-            matrix[:size//2,:size//2] = self.__calculate_pixels(matrix[:size//2,:size//2], pixel*4)
-            matrix[size//2:,:size//2] = self.__calculate_pixels(matrix[size//2:,:size//2], pixel*4+1)
-            matrix[:size//2,size//2:] = self.__calculate_pixels(matrix[:size//2,size//2:], pixel*4+2)
-            matrix[size//2:,size//2:] = self.__calculate_pixels(matrix[size//2:,size//2:], pixel*4+3)
+            matrix[: size // 2, : size // 2] = self.__calculate_pixels(matrix[: size // 2, : size // 2], pixel * 4)
+            matrix[size // 2 :, : size // 2] = self.__calculate_pixels(matrix[size // 2 :, : size // 2], pixel * 4 + 1)
+            matrix[: size // 2, size // 2 :] = self.__calculate_pixels(matrix[: size // 2, size // 2 :], pixel * 4 + 2)
+            matrix[size // 2 :, size // 2 :] = self.__calculate_pixels(matrix[size // 2 :, size // 2 :], pixel * 4 + 3)
         else:
             matrix = pixel
         return matrix
@@ -118,9 +118,7 @@ class HiPSGenerator(Task):
         max_theta = max_phi = 2 * math.pi / (4 * 2**order) / 2
 
         # Vectorised healpy call — healpy is CPU-only, but accepts an array of pixels
-        target_theta, target_phi = healpy.pix2ang(
-            2**order * size, healpix_pixel.ravel(), nest=True
-        )
+        target_theta, target_phi = healpy.pix2ang(2**order * size, healpix_pixel.ravel(), nest=True)
         target_theta = target_theta.reshape(size, size)
         target_phi = target_phi.reshape(size, size)
 
@@ -128,6 +126,7 @@ class HiPSGenerator(Task):
         use_gpu = False
         try:
             import cupy as xp
+
             target_theta = xp.asarray(target_theta)
             target_phi = xp.asarray(target_phi)
             data = xp.asarray(data)
