@@ -1,3 +1,4 @@
+import io
 import math
 import multiprocessing as mp
 import os
@@ -51,7 +52,6 @@ class DatasetProjection(Task):
         """
         super().__init__("DatasetProjection", **kwargs)
         self.encoder = encoder
-        self.data_directory = data_directory
         self.image_maker = image_maker
         self.hierarchy = hierarchy
         self.hips_path = hips_path
@@ -62,6 +62,13 @@ class DatasetProjection(Task):
         self.hips_name = hips_name
         self.distortion_correction = distortion_correction
         self.catalog_file = catalog_file
+
+        dataset = ds.dataset(data_directory, format="parquet")
+        table = dataset.to_table(columns=["image"])
+        self.images = table["image"]
+
+        first_image = Image.open(io.BytesIO(self.images[0].as_py()["bytes"]))
+        self.image_size = first_image.size[0]  # assuming square images
 
     def __create_folders(
         self,
@@ -121,10 +128,10 @@ hips_frame           = equatorial
                 healpix_cells[pixel].append(int(number))
         return healpix_cells
 
-    def __embed_tile(self, dataset, catalog, order, pixel, hierarchy, idx):
+    def __embed_tile(self, catalog, order, pixel, hierarchy, idx):
         if hierarchy <= 1:
             if len(idx) == 0:
-                data = np.ones((3, self.output_size, self.output_size))
+                data = np.ones((3, self.image_size, self.image_size))
                 data[0] = data[0] * 77.0 / 255.0  # deep purple
                 data[1] = data[1] * 0.0 / 255.0
                 data[2] = data[2] * 153.0 / 255.0
@@ -133,13 +140,12 @@ hips_frame           = equatorial
                 vector = healpy.pix2vec(2**order, pixel, nest=True)
                 distances = np.sum(np.square(catalog[np.array(idx)][:, 4:7] - vector), axis=1)
                 best = idx[np.argmin(distances)]
-                data = dataset[int(catalog[best][0])]["image"]
+                data = self.images[int(catalog[best][0])].as_py()["bytes"]
                 if self.distortion_correction:
                     data = correct_distortion(data, order, pixel)
             return data
         healpix_cells = self.__calculate_healpix_cells(catalog, idx, order + 1, range(pixel * 4, pixel * 4 + 4))
         q1 = self.__embed_tile(
-            dataset,
             catalog,
             order + 1,
             pixel * 4,
@@ -147,7 +153,6 @@ hips_frame           = equatorial
             healpix_cells[pixel * 4],
         )
         q2 = self.__embed_tile(
-            dataset,
             catalog,
             order + 1,
             pixel * 4 + 1,
@@ -155,7 +160,6 @@ hips_frame           = equatorial
             healpix_cells[pixel * 4 + 1],
         )
         q3 = self.__embed_tile(
-            dataset,
             catalog,
             order + 1,
             pixel * 4 + 2,
@@ -163,7 +167,6 @@ hips_frame           = equatorial
             healpix_cells[pixel * 4 + 2],
         )
         q4 = self.__embed_tile(
-            dataset,
             catalog,
             order + 1,
             pixel * 4 + 3,
@@ -177,10 +180,10 @@ hips_frame           = equatorial
         result[q1.shape[0] :, q1.shape[1] :] = q4
         return result
 
-    def __create_embeded_tile(self, dataset, catalog, healpix_cells, i, range_j):
+    def __create_embeded_tile(self, catalog, healpix_cells, i, range_j):
         for j in range_j:
-            data = self.__embed_tile(dataset, catalog, i, j, self.hierarchy, healpix_cells[j])
-            image = Image.fromarray((np.clip(data.detach().numpy(), 0, 1) * 255).astype(np.uint8))
+            data = self.__embed_tile(catalog, i, j, self.hierarchy, healpix_cells[j])
+            image = Image.fromarray((np.clip(data, 0, 1) * 255).astype(np.uint8))
             image.save(
                 os.path.join(
                     self.output_path,
@@ -196,8 +199,6 @@ hips_frame           = equatorial
         print(f"Executing task: {self.name}")
         self.__create_folders(self.max_order)
 
-        dataset = ds.dataset(self.data_directory, format="parquet")
-
         print("Loading catalog...")
         catalog = np.genfromtxt(
             self.catalog_file,
@@ -210,7 +211,7 @@ hips_frame           = equatorial
             healpix_cells = self.__calculate_healpix_cells(catalog, range(catalog.shape[0]), i, range(12 * 4**i))
 
             if self.number_of_workers == 1:
-                self.__create_embeded_tile(dataset, catalog, healpix_cells, i, range(12 * 4**i))
+                self.__create_embeded_tile(catalog, healpix_cells, i, range(12 * 4**i))
             else:
                 # process_map(_foo, range(0, 30), max_workers=2)
 
@@ -220,7 +221,6 @@ hips_frame           = equatorial
                         mp.Process(
                             target=self.__create_embeded_tile,
                             args=(
-                                dataset,
                                 catalog,
                                 healpix_cells,
                                 i,
