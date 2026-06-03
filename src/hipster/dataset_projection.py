@@ -156,17 +156,19 @@ hips_frame           = equatorial
                 data[0] = data[0] * 77.0 / 255.0  # deep purple
                 data[1] = data[1] * 0.0 / 255.0
                 data[2] = data[2] * 153.0 / 255.0
-                data = np.swapaxes(data, 0, 2)
+                # data = np.swapaxes(data, 0, 2)
+                image = self.image_maker(data)
             else:
                 vector = healpy.pix2vec(2**order, pixel, nest=True)
                 distances = np.sum(np.square(self.catalog[np.array(idx)] - vector), axis=1)
                 best = idx[np.argmin(distances)]
                 data = self.images[best].as_py()["bytes"]
                 img = Image.open(io.BytesIO(data)).resize((self.image_size, self.image_size))
-                data = np.array(img) / 255.0
+                data = np.array(img.convert("RGB")) / 255.0  # (H, W, 3)
+                image = self.image_maker(data.transpose(2, 0, 1))  # expects (C, H, W)
                 if self.distortion_correction:
-                    data = correct_distortion(data, order, pixel)
-            return data
+                    image = correct_distortion(image, order, pixel)
+            return image
         healpix_cells = self.__calculate_healpix_cells(idx, order + 1, range(pixel * 4, pixel * 4 + 4))
         q1 = self.__embed_tile(
             order + 1,
@@ -192,7 +194,7 @@ hips_frame           = equatorial
             hierarchy / 2,
             healpix_cells[pixel * 4 + 3],
         )
-        result = np.ones((q1.shape[0] * 2, q1.shape[1] * 2, 3))
+        result = np.zeros((q1.shape[0] * 2, q1.shape[1] * 2, 3), dtype=np.uint8)
         result[: q1.shape[0], : q1.shape[1]] = q1
         result[q1.shape[0] :, : q1.shape[1]] = q2
         result[: q1.shape[0], q1.shape[1] :] = q3
@@ -201,8 +203,8 @@ hips_frame           = equatorial
 
     def __create_embeded_tile(self, healpix_cells, i, range_j):
         for j in range_j:
-            data = self.__embed_tile(i, j, self.hierarchy, healpix_cells[j])
-            image = Image.fromarray((np.clip(data, 0, 1) * 255).astype(np.uint8))
+            image = self.__embed_tile(i, j, self.hierarchy, healpix_cells[j])
+            image = Image.fromarray(image)
             image.save(
                 os.path.join(
                     self.output_path,

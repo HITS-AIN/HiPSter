@@ -18,9 +18,23 @@ tasks:
       max_order: 4
       hierarchy: 4
       hips_id: Celebrities
+      hips_name: Celebrities projection dewarped
+      hips_path: projection_dewarped
+      distortion_correction: true
+
+  - class_path: hipster.DatasetProjection
+    init_args:
+      encoder:
+        model_path: /home/doserbd/celeb/model/encoder.onnx
+      data_directory: /home/doserbd/celeb/data/train-00000-of-00001.parquet
+      image_maker:
+        class_path: hipster.ImagePlotter
+      max_order: 4
+      hierarchy: 4
+      hips_id: Celebrities
       hips_name: Celebrities projection
       hips_path: projection
-      distortion_correction: true
+      distortion_correction: false
 
   # - class_path: hipster.HiPSGenerator
   #   init_args:
