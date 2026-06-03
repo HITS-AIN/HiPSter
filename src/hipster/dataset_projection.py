@@ -89,7 +89,9 @@ class DatasetProjection(Task):
             data = (data / 255.0).astype("float32")  # Normalize to [0, 1]
 
             z = self.encoder(data)
-            self.catalog.append(z)  # (N, 3)
+            self.catalog.append(z)
+
+        self.catalog = np.concatenate(self.catalog, axis=0)  # (num_rows, 3)
 
     def __create_folders(
         self,
