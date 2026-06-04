@@ -11,7 +11,7 @@
     <script type='text/javascript'>
         var aladin;
             A.init.then(() => {
-            aladin = A.aladin('#aladin-lite-div');
+            aladin = A.aladin('#aladin-lite-div', {fullScreen:true});
             aladin.removeLayers()
 
             {% for image_layer in image_layers %}
@@ -24,7 +24,7 @@
             aladin.addCatalog(catalogLayer{{ loop.index }});
             {% endfor %}
 
-            aladin.setFoV(180.0);
+            aladin.setFoV(400.0);
         });
     </script>
 </body>
