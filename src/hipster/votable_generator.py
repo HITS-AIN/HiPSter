@@ -1,3 +1,4 @@
+import io
 import math
 import os
 from typing import Optional
@@ -65,7 +66,6 @@ class VOTableGenerator(Task):
         """Generates the catalog."""
 
         catalog = {
-            "preview": [],
             "x": [],
             "y": [],
             "z": [],
@@ -74,11 +74,17 @@ class VOTableGenerator(Task):
         }
 
         if self.dataset == "gaia":
+            catalog["preview"] = []
             catalog["source_id"] = []
         elif self.dataset == "illustris":
+            catalog["preview"] = []
             catalog["simulation"] = []
             catalog["snapshot"] = []
             catalog["subhalo_id"] = []
+        elif self.dataset == "celebrities":
+            catalog["name"] = []
+        else:
+            raise ValueError(f"Unknown dataset: {self.dataset}")
 
         dataset = ds.dataset(self.data_directory, format="parquet")
 
@@ -90,12 +96,16 @@ class VOTableGenerator(Task):
             shape = tuple(map(int, shape))
 
         for batch in dataset.to_batches(batch_size=self.batch_size):
-            data = batch[self.data_column].flatten().to_numpy().reshape(-1, *shape).copy().astype(np.float32)
+            data = batch[self.data_column]
+            images = []
+            for item in batch["image"]:
+                img_bytes = item["bytes"].as_py()
+                img = Image.open(io.BytesIO(img_bytes)).convert("RGB").resize((128, 128))
+                images.append(np.array(img))
 
-            # Normalize the data
-            for i in range(data.shape[0]):  # batches
-                for j in range(data.shape[1]):  # channels
-                    data[i][j] = (data[i][j] - data[i][j].min()) / (data[i][j].max() - data[i][j].min())
+            data = np.stack(images)  # (N, 128, 128, 3)
+            data = data.transpose(0, 3, 1, 2)  # (N, 3, 128, 128)
+            data = (data / 255.0).astype("float32")  # Normalize to [0, 1]
 
             if self.dataset == "illustris":
                 self.__images_to_jpg(batch.to_pandas(), "images")
@@ -126,6 +136,8 @@ class VOTableGenerator(Task):
                 catalog["simulation"].extend(batch["simulation"].to_pylist())
                 catalog["snapshot"].extend(batch["snapshot"].to_pylist())
                 catalog["subhalo_id"].extend(batch["subhalo_id"].to_pylist())
+            elif self.dataset == "celebrities":
+                catalog["name"].extend(batch["label"].to_pylist())
 
             catalog["x"].extend(latent_position[:, 0])
             catalog["y"].extend(latent_position[:, 1])
