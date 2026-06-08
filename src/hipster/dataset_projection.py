@@ -13,6 +13,7 @@ from PIL import Image
 
 from hipster.html_generator import HTMLGenerator
 
+from .create_allsky import create_allsky
 from .distortion_correction import correct_distortion
 from .inference import Inference
 from .task import Task
@@ -246,6 +247,8 @@ hips_frame           = equatorial
                     mypool[-1].start()
                 for process in mypool:
                     process.join()
+
+            create_allsky(data_directory=pathlib.Path(self.output_path), order=i)
 
         # Write the properties of the HiPS data to a file
         # This must be done after the tiles are generated
