@@ -11,7 +11,7 @@ tasks:
   - class_path: hipster.NumberedHiPSGenerator
     init_args:
       max_order: 4
-      hierarchy: 4
+      hierarchy: 2
       hips_id: Numbering
       hips_name: Numbering
       hips_path: numbering

@@ -4,11 +4,13 @@ import os
 import pathlib
 from datetime import datetime, timezone
 
+import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 
 from hipster.html_generator import HTMLGenerator
 
 from .create_allsky import create_allsky
+from .distortion_correction import correct_distortion
 from .task import Task
 
 
@@ -17,7 +19,7 @@ class NumberedHiPSGenerator(Task):
         self,
         max_order: int = 1,
         hierarchy: int = 1,
-        image_size: int = 512,
+        tile_size: int = 512,
         hips_path: str = "output",
         number_of_workers: int = 1,
         hips_id: str = "",
@@ -42,7 +44,8 @@ class NumberedHiPSGenerator(Task):
         super().__init__("DatasetProjection", **kwargs)
         self.max_order = max_order
         self.hierarchy = hierarchy
-        self.image_size = image_size
+        self.tile_size = tile_size
+        self.image_size = int(tile_size / hierarchy)
         self.hips_path = hips_path
         self.output_path = os.path.join(self.root_path, hips_path)
         self.number_of_workers = number_of_workers
@@ -83,19 +86,38 @@ hips_status          = public master clonable
 hips_tile_format     = jpeg
 hips_order           = {self.max_order}
 hips_order_min       = 0
-hips_tile_width      = {self.image_size}
+hips_tile_width      = {self.tile_size}
 hips_frame           = equatorial
 """)
 
-    def __create_tile(self, i, range_j):
-        for j in range_j:
+    def __create_tile_hierachy(self, order, pixel, hierarchy):
+        if hierarchy <= 1:
             image = Image.new("RGB", (self.image_size, self.image_size), color=(30, 30, 30))
             draw = ImageDraw.Draw(image)
-            text = f"{i},{j}"
+            text = f"{order},{pixel}"
             font = ImageFont.truetype(
                 "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", size=max(12, self.image_size // 6)
             )
             draw.text((self.image_size // 2, self.image_size // 2), text, fill=(255, 255, 255), anchor="mm", font=font)
+            image = np.array(image)
+            if self.distortion_correction:
+                image = correct_distortion(image, order, pixel)
+            return image
+        q1 = self.__create_tile_hierachy(order + 1, pixel * 4, hierarchy / 2)
+        q2 = self.__create_tile_hierachy(order + 1, pixel * 4 + 1, hierarchy / 2)
+        q3 = self.__create_tile_hierachy(order + 1, pixel * 4 + 2, hierarchy / 2)
+        q4 = self.__create_tile_hierachy(order + 1, pixel * 4 + 3, hierarchy / 2)
+        result = np.zeros((q1.shape[0] * 2, q1.shape[1] * 2, 3), dtype=np.uint8)
+        result[: q1.shape[0], : q1.shape[1]] = q1
+        result[q1.shape[0] :, : q1.shape[1]] = q2
+        result[: q1.shape[0], q1.shape[1] :] = q3
+        result[q1.shape[0] :, q1.shape[1] :] = q4
+        return result
+
+    def __create_tile(self, i, range_j):
+        for j in range_j:
+            image = self.__create_tile_hierachy(i, j, self.hierarchy)
+            image = Image.fromarray(image)
             image = image.transpose(Image.FLIP_LEFT_RIGHT)
             image.save(
                 os.path.join(
