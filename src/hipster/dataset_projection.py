@@ -76,28 +76,7 @@ class DatasetProjection(Task):
         self.num_rows = table.num_rows
         self.images = table[self.data_column]
 
-        print("Calculating catalog...")
-        self.catalog = []
-        for batch in dataset.to_batches(batch_size=self.batch_size):
-            data = batch[self.data_column]
-            images = []
-            for item in batch[self.data_column]:
-                img_bytes = item["bytes"].as_py()
-                img = (
-                    Image.open(io.BytesIO(img_bytes))
-                    .convert("RGB")
-                    .resize((self.model_input_size, self.model_input_size))
-                )
-                images.append(np.array(img))
-
-            data = np.stack(images)  # (N, 128, 128, 3)
-            data = data.transpose(0, 3, 1, 2)  # (N, 3, 128, 128)
-            data = (data / 255.0).astype("float32")  # Normalize to [0, 1]
-
-            z = self.encoder(data)
-            self.catalog.append(z)
-
-        self.catalog = np.concatenate(self.catalog, axis=0)  # (num_rows, 3)
+        self.catalog = None
 
     def __create_folders(
         self,
@@ -206,6 +185,27 @@ hips_frame           = equatorial
 
         print(f"Executing task: {self.name}")
         self.__create_folders(self.max_order)
+
+        if self.catalog is None:
+            print("Calculating catalog...")
+            self.catalog = []
+            for batch in ds.dataset.to_batches(batch_size=self.batch_size):
+                data = batch[self.data_column]
+                images = []
+                for item in batch[self.data_column]:
+                    img_bytes = item["bytes"].as_py()
+                    img = (
+                        Image.open(io.BytesIO(img_bytes))
+                        .convert("RGB")
+                        .resize((self.model_input_size, self.model_input_size))
+                    )
+                    images.append(np.array(img))
+                data = np.stack(images)  # (N, 128, 128, 3)
+                data = data.transpose(0, 3, 1, 2)  # (N, 3, 128, 128)
+                data = (data / 255.0).astype("float32")  # Normalize to [0, 1]
+                z = self.encoder(data)
+                self.catalog.append(z)
+            self.catalog = np.concatenate(self.catalog, axis=0)  # (num_rows, 3)
 
         for i in range(self.max_order + 1):
             healpix_cells = self.__calculate_healpix_cells(range(self.num_rows), i, range(12 * 4**i))
