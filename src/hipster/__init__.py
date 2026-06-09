@@ -7,6 +7,7 @@ from .html_generator import HTMLGenerator
 from .image_generator import ImageGenerator
 from .image_plotter import ImagePlotter
 from .inference import Inference
+from .numbered_hips_generator import NumberedHiPSGenerator
 from .range import Range
 from .spectrum_plotter import SpectrumPlotter
 from .task import Task
@@ -21,6 +22,7 @@ __all__ = [
     "ImageGenerator",
     "ImagePlotter",
     "Inference",
+    "NumberedHiPSGenerator",
     "Range",
     "SpectrumPlotter",
     "Task",
