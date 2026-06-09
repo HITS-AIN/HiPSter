@@ -26,10 +26,12 @@ class DatasetProjection(Task):
         image_maker: Callable,
         data_directory: str,
         data_column: str = "image",
+        max_order: int = 1,
         hierarchy: int = 1,
+        tile_size: int = 512,
+        model_input_size: int = 128,
         hips_path: str = "output",
         number_of_workers: int = 1,
-        max_order: int = 1,
         hips_id: str = "",
         hips_name: str = "",
         distortion_correction: bool = True,
@@ -43,10 +45,11 @@ class DatasetProjection(Task):
             encoder(Inference): Function that encodes the data.
             data_directory (str): The directory containing the data.
             image_maker (callable): Function that generates the image.
+            max_order (int, optional): Maximum order of the HiPS tiling. Defaults to 1.
             hierarchy (int, optional): Hierarchy of the HiPS tiling. Defaults to 1.
+            tile_size (int, optional): Size of the HiPS tiles. Defaults to 512.
             output_path (str, optional): Output path. Defaults to "output".
             number_of_workers (int, optional): Number of workers. Defaults to 1.
-            max_order (int, optional): Maximum order of the HiPS tiling. Defaults to 1.
             hips_id (str, optional): HiPS ID. Defaults to "".
             hips_name (str, optional): HiPS name. Defaults to "".
             distortion_correction (bool, optional): Correction of the distortion of the HiPS tiles. Defaults to True.
@@ -55,6 +58,9 @@ class DatasetProjection(Task):
         self.encoder = encoder
         self.image_maker = image_maker
         self.data_column = data_column
+        self.tile_size = tile_size
+        self.model_input_size = model_input_size
+        self.image_size = int(tile_size / hierarchy)
         self.hierarchy = hierarchy
         self.hips_path = hips_path
         self.output_path = os.path.join(self.root_path, hips_path)
@@ -70,10 +76,6 @@ class DatasetProjection(Task):
         self.num_rows = table.num_rows
         self.images = table[self.data_column]
 
-        # first_image = Image.open(io.BytesIO(self.images[0].as_py()["bytes"]))
-        # self.image_size = first_image.size[0]  # assuming square images
-        self.image_size = 128
-
         print("Calculating catalog...")
         self.catalog = []
         for batch in dataset.to_batches(batch_size=self.batch_size):
@@ -81,7 +83,11 @@ class DatasetProjection(Task):
             images = []
             for item in batch[self.data_column]:
                 img_bytes = item["bytes"].as_py()
-                img = Image.open(io.BytesIO(img_bytes)).convert("RGB").resize((self.image_size, self.image_size))
+                img = (
+                    Image.open(io.BytesIO(img_bytes))
+                    .convert("RGB")
+                    .resize((self.model_input_size, self.model_input_size))
+                )
                 images.append(np.array(img))
 
             data = np.stack(images)  # (N, 128, 128, 3)
@@ -125,7 +131,7 @@ hips_status          = public master clonable
 hips_tile_format     = jpeg
 hips_order           = {self.max_order}
 hips_order_min       = 0
-hips_tile_width      = {self.image_size}
+hips_tile_width      = {self.tile_size}
 hips_frame           = equatorial
 """)
 
@@ -171,30 +177,10 @@ hips_frame           = equatorial
                     image = correct_distortion(image, order, pixel)
             return image
         healpix_cells = self.__calculate_healpix_cells(idx, order + 1, range(pixel * 4, pixel * 4 + 4))
-        q1 = self.__embed_tile(
-            order + 1,
-            pixel * 4,
-            hierarchy / 2,
-            healpix_cells[pixel * 4],
-        )
-        q2 = self.__embed_tile(
-            order + 1,
-            pixel * 4 + 1,
-            hierarchy / 2,
-            healpix_cells[pixel * 4 + 1],
-        )
-        q3 = self.__embed_tile(
-            order + 1,
-            pixel * 4 + 2,
-            hierarchy / 2,
-            healpix_cells[pixel * 4 + 2],
-        )
-        q4 = self.__embed_tile(
-            order + 1,
-            pixel * 4 + 3,
-            hierarchy / 2,
-            healpix_cells[pixel * 4 + 3],
-        )
+        q1 = self.__embed_tile(order + 1, pixel * 4, hierarchy / 2, healpix_cells[pixel * 4])
+        q2 = self.__embed_tile(order + 1, pixel * 4 + 1, hierarchy / 2, healpix_cells[pixel * 4 + 1])
+        q3 = self.__embed_tile(order + 1, pixel * 4 + 2, hierarchy / 2, healpix_cells[pixel * 4 + 2])
+        q4 = self.__embed_tile(order + 1, pixel * 4 + 3, hierarchy / 2, healpix_cells[pixel * 4 + 3])
         result = np.zeros((q1.shape[0] * 2, q1.shape[1] * 2, 3), dtype=np.uint8)
         result[: q1.shape[0], : q1.shape[1]] = q1
         result[q1.shape[0] :, : q1.shape[1]] = q2
