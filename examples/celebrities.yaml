@@ -3,7 +3,8 @@ overwrite: true
 verbose: true
 
 html:
-  url: http://localhost:8083
+  # url: http://localhost:8083
+  url: https://space.h-its.org/celebrities
   title: Celebrities
   aladin_lite_version: 3.6.5
 
@@ -64,3 +65,4 @@ tasks:
       color: red
       shape: circle
       size: 5
+      skip: true
