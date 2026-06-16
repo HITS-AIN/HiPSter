@@ -1,4 +1,5 @@
 import io
+import json
 import math
 import os
 from typing import Optional
@@ -7,6 +8,7 @@ import healpy
 import numpy as np
 import pandas as pd
 import pyarrow.dataset as ds
+import pyarrow.parquet as pq
 from astropy.io.votable import writeto
 from astropy.table import Table
 from PIL import Image
@@ -25,7 +27,6 @@ class VOTableGenerator(Task):
         data_column: str = "data",
         dataset: str = "illustris",
         output_file: str = "illustris.vot",
-        url: str = "http://localhost:8083",
         batch_size: int = 256,
         catalog_name: str = "",
         color: str = "red",
@@ -41,7 +42,6 @@ class VOTableGenerator(Task):
             data_column (str): The column name of the data.
             dataset (str): The type of dataset. Defaults to "gaia".
             output_file (str, optional): The output file name. Defaults to "votable.xml".
-            url (str): The URL of the HiPS server. Defaults to "http://localhost:8083".
             batch_size (int, optional): The batch size to use. Defaults to 256.
             catalog_name (str, optional): The name of the catalog. Defaults to "".
             color (str, optional): The color of the catalog. Defaults to "red".
@@ -55,7 +55,7 @@ class VOTableGenerator(Task):
         self.data_column = data_column
         self.dataset = dataset
         self.output_file = output_file
-        self.url = url
+        self.url = None
         self.batch_size = batch_size
         self.catalog_name = catalog_name
         self.color = color
@@ -65,28 +65,39 @@ class VOTableGenerator(Task):
     def get_catalog(self) -> pd.DataFrame:
         """Generates the catalog."""
 
-        catalog = {
-            "x": [],
-            "y": [],
-            "z": [],
-            "RA2000": [],
-            "DEC2000": [],
-        }
-
+        catalog = {}
         if self.dataset == "gaia":
             catalog["preview"] = []
             catalog["source_id"] = []
+            catalog["RA2000"] = []
+            catalog["DEC2000"] = []
+            catalog["x"] = []
+            catalog["y"] = []
+            catalog["z"] = []
         elif self.dataset == "illustris":
             catalog["preview"] = []
             catalog["simulation"] = []
             catalog["snapshot"] = []
             catalog["subhalo_id"] = []
+            catalog["RA2000"] = []
+            catalog["DEC2000"] = []
+            catalog["x"] = []
+            catalog["y"] = []
+            catalog["z"] = []
         elif self.dataset == "celebrities":
+            catalog["preview"] = []
             catalog["name"] = []
+            catalog["RA2000"] = []
+            catalog["DEC2000"] = []
         else:
             raise ValueError(f"Unknown dataset: {self.dataset}")
 
         dataset = ds.dataset(self.data_directory, format="parquet")
+
+        # If the dataset is Celebrities, we need to load it using the Hugging Face datasets library to get the labels.
+        if self.dataset == "celebrities":
+            meta = json.loads(pq.read_schema(self.data_directory).metadata[b"huggingface"])
+            names = meta["info"]["features"]["label"]["names"]
 
         # Reshape the data if the shape is stored in the metadata.
         metadata_shape = bytes(self.data_column, "utf8") + b"_shape"
@@ -95,6 +106,7 @@ class VOTableGenerator(Task):
             shape = shape_string.replace("(", "").replace(")", "").split(",")
             shape = tuple(map(int, shape))
 
+        row_offset = 0
         for batch in dataset.to_batches(batch_size=self.batch_size):
             if self.dataset == "celebrities":
                 data = batch[self.data_column]
@@ -118,6 +130,9 @@ class VOTableGenerator(Task):
             if self.dataset == "illustris":
                 self.__images_to_jpg(batch.to_pandas(), "images")
                 self.__images_to_jpg(batch.to_pandas(), "thumbnails", size=64)
+
+            if self.dataset == "celebrities":
+                self.__celebrities_to_jpg(batch.to_pandas(), "thumbnails", offset=row_offset, size=64)
 
             latent_position = self.encoder(data)
 
@@ -145,13 +160,19 @@ class VOTableGenerator(Task):
                 catalog["snapshot"].extend(batch["snapshot"].to_pylist())
                 catalog["subhalo_id"].extend(batch["subhalo_id"].to_pylist())
             elif self.dataset == "celebrities":
-                catalog["name"].extend(batch["label"].to_pylist())
+                for i in range(len(batch)):
+                    catalog["preview"].append(
+                        f"<img src='{self.url}/{self.title}/thumbnails/{str(row_offset + i)}.jpg'>"
+                    )
+                catalog["name"].extend([names[i] for i in batch["label"].to_pylist()])
+                row_offset += len(batch)
 
-            catalog["x"].extend(latent_position[:, 0])
-            catalog["y"].extend(latent_position[:, 1])
-            catalog["z"].extend(latent_position[:, 2])
             catalog["RA2000"].extend(angles[:, 1])
             catalog["DEC2000"].extend(90.0 - angles[:, 0])
+            if self.dataset != "celebrities":
+                catalog["x"].extend(latent_position[:, 0])
+                catalog["y"].extend(latent_position[:, 1])
+                catalog["z"].extend(latent_position[:, 2])
 
         return pd.DataFrame(catalog)
 
@@ -182,6 +203,25 @@ class VOTableGenerator(Task):
                 )
             )
 
+    def __celebrities_to_jpg(
+        self, df: pd.DataFrame, output_path: str, offset: int = 0, size: Optional[int] = None
+    ) -> None:
+        """Store celebrity images as jpg files."""
+
+        os.makedirs(os.path.join(self.root_path, output_path), exist_ok=True)
+        for i in range(len(df)):
+            img_bytes = df[self.data_column][i]["bytes"]
+            image = Image.open(io.BytesIO(img_bytes)).convert("RGB")
+            if size:
+                image = image.resize((size, size))
+            image.save(
+                os.path.join(
+                    self.root_path,
+                    output_path,
+                    str(offset + i) + ".jpg",
+                )
+            )
+
     def execute(self) -> None:
         print(f"Executing task: {self.name}")
         table = Table.from_pandas(self.get_catalog())
@@ -189,6 +229,7 @@ class VOTableGenerator(Task):
 
     def register(self, html_generator: HTMLGenerator) -> None:
         """Register the VOTable to the HTML generator."""
+        self.url = html_generator.url
         html_generator.add_votable(
             html_generator.VOTable(
                 url=f"{html_generator.url}/{self.output_file}",
