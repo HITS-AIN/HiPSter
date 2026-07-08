@@ -15,7 +15,7 @@ tasks:
         input_name: z
       image_maker:
         class_path: hipster.ImagePlotter
-      max_order: 4
+      max_order: 5
       hierarchy: 4
       hips_id: IllustrisTNG SKIRT SDSS
       hips_name: IllustrisTNG SKIRT SDSS model
@@ -28,7 +28,7 @@ tasks:
       data_directory: data/illustris_tng_skirt_sdss/dataset/data/train-00000-of-00001.parquet
       image_maker:
         class_path: hipster.ImagePlotter
-      max_order: 4
+      max_order: 5
       hierarchy: 4
       hips_id: IllustrisTNG SKIRT SDSS
       hips_name: IllustrisTNG SKIRT SDSS projection dewarped
