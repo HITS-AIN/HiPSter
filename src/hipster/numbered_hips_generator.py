@@ -156,7 +156,8 @@ hips_frame           = equatorial
                 for process in mypool:
                     process.join()
 
-            create_allsky(data_directory=pathlib.Path(self.output_path), order=i)
+        # Generate the all-sky image for order 3
+        create_allsky(data_directory=pathlib.Path(self.output_path), order=3)
 
         # Write the properties of the HiPS data to a file
         # This must be done after the tiles are generated
