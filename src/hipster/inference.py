@@ -1,6 +1,35 @@
+import ctypes
 import os
+import site
 
 import numpy as np
+
+
+def _preload_nvidia_libs() -> None:
+    """Pre-load cuDNN/cuBLAS from nvidia-* uv/pip packages so onnxruntime-gpu can find them."""
+    libs = [
+        "nvidia/cudnn/lib/libcudnn.so.9",
+        "nvidia/cublas/lib/libcublas.so.12",
+        "nvidia/cufft/lib/libcufft.so.11",
+    ]
+    site_dirs = site.getsitepackages()
+    try:
+        site_dirs = site_dirs + [site.getusersitepackages()]
+    except AttributeError:
+        pass
+    for lib in libs:
+        for site_dir in site_dirs:
+            path = os.path.join(site_dir, lib)
+            if os.path.exists(path):
+                try:
+                    ctypes.CDLL(path, mode=ctypes.RTLD_GLOBAL)
+                except OSError:
+                    pass
+                break
+
+
+_preload_nvidia_libs()
+
 import onnxruntime as ort
 
 
@@ -19,7 +48,10 @@ class Inference:
         self.batch_size = batch_size
 
     def __get_providers(self):
-        if "CUDAExecutionProvider" in ort.get_available_providers():
+        ort.set_default_logger_severity(4)  # suppress CUDA provider load errors
+        available = ort.get_available_providers()
+        ort.set_default_logger_severity(2)  # restore to WARNING
+        if "CUDAExecutionProvider" in available:
             return ["CUDAExecutionProvider", "CPUExecutionProvider"]
         else:
             return ["CPUExecutionProvider"]
