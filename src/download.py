@@ -1,6 +1,10 @@
 import os
 
-from huggingface_hub import snapshot_download
+# Xet's read-token endpoint can be flaky over some networks/proxies; disable it
+# so huggingface_hub falls back to plain HTTP/LFS downloads.
+os.environ.setdefault("HF_HUB_DISABLE_XET", "1")
+
+from huggingface_hub import snapshot_download  # noqa: E402
 
 
 def download_parquet_files(repo_id: str, local_dir: str, hf_token: str = None):
