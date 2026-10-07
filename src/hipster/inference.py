@@ -31,7 +31,7 @@ def _preload_nvidia_libs() -> None:
 _preload_nvidia_libs()
 
 # Suppress flake8 error for import order, since onnxruntime must be imported after preloading nvidia libs
-import onnxruntime as ort  # noqa: E402
+import onnxruntime as ort
 
 
 class Inference:

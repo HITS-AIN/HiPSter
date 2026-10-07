@@ -8,10 +8,8 @@ def wavelength_to_rgb(wavelength, gamma=0.8):
     """
 
     # Clamp wavelength to the visible range
-    if wavelength < 380:
-        wavelength = 380
-    if wavelength > 750:
-        wavelength = 750
+    wavelength = max(wavelength, 380)
+    wavelength = min(wavelength, 750)
 
     wavelength = float(wavelength)
     if wavelength >= 380 and wavelength <= 440:

@@ -17,8 +17,8 @@ __version__ = importlib.metadata.version("astro-hipster")
 __all__ = [
     "AbsorptionLinePlotter",
     "DatasetProjection",
-    "HiPSGenerator",
     "HTMLGenerator",
+    "HiPSGenerator",
     "ImageGenerator",
     "ImagePlotter",
     "Inference",

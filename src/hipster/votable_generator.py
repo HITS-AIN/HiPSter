@@ -2,7 +2,6 @@ import io
 import json
 import math
 import os
-from typing import Optional
 
 import healpy
 import numpy as np
@@ -138,8 +137,8 @@ class VOTableGenerator(Task):
             if self.dataset == "gaia":
                 for source_id in batch["source_id"]:
                     catalog["preview"].append(
-                        f"<a href='{self.url}/{self.title}/images/{str(source_id)}.jpg' target='_blank'>"
-                        + f"<img src='{self.url}/{self.title}/thumbnails/{str(source_id)}.jpg'></a>"
+                        f"<a href='{self.url}/{self.title}/images/{source_id!s}.jpg' target='_blank'>"
+                        + f"<img src='{self.url}/{self.title}/thumbnails/{source_id!s}.jpg'></a>"
                     )
                 catalog["source_id"].extend(batch["source_id"].to_pylist())
             elif self.dataset == "illustris":
@@ -148,25 +147,21 @@ class VOTableGenerator(Task):
                 ):
                     catalog["preview"].append(
                         f"<a href='{self.url}/{self.title}/images/{simulation}/{snapshot}/"
-                        + f"{str(subhalo_id)}.jpg' target='_blank'>"
+                        + f"{subhalo_id!s}.jpg' target='_blank'>"
                         + f"<img src='{self.url}/{self.title}/thumbnails/{simulation}/{snapshot}/"
-                        + f"{str(subhalo_id)}.jpg'></a>"
+                        + f"{subhalo_id!s}.jpg'></a>"
                     )
                 catalog["simulation"].extend(batch["simulation"].to_pylist())
                 catalog["snapshot"].extend(batch["snapshot"].to_pylist())
                 catalog["subhalo_id"].extend(batch["subhalo_id"].to_pylist())
             elif self.dataset == "celebrities":
                 for i in range(len(batch)):
-                    catalog["preview"].append(
-                        f"<img src='{self.url}/{self.title}/thumbnails/{str(row_offset + i)}.jpg'>"
-                    )
+                    catalog["preview"].append(f"<img src='{self.url}/{self.title}/thumbnails/{row_offset + i!s}.jpg'>")
                 catalog["name"].extend([names[i] for i in batch["label"].to_pylist()])
                 row_offset += len(batch)
             elif self.dataset == "emoji":
                 for i in range(len(batch)):
-                    catalog["preview"].append(
-                        f"<img src='{self.url}/{self.title}/thumbnails/{str(row_offset + i)}.jpg'>"
-                    )
+                    catalog["preview"].append(f"<img src='{self.url}/{self.title}/thumbnails/{row_offset + i!s}.jpg'>")
                 catalog["name"].extend(batch["text"].to_pylist())
                 row_offset += len(batch)
 
@@ -179,9 +174,7 @@ class VOTableGenerator(Task):
 
         return pd.DataFrame(catalog)
 
-    def __generate_images(
-        self, df: pd.DataFrame, output_path: str, offset: int = 0, size: Optional[int] = None
-    ) -> None:
+    def __generate_images(self, df: pd.DataFrame, output_path: str, offset: int = 0, size: int | None = None) -> None:
         """Store images as jpg files."""
 
         os.makedirs(os.path.join(self.root_path, output_path), exist_ok=True)

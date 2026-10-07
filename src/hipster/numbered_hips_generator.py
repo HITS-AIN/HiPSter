@@ -2,7 +2,7 @@ import math
 import multiprocessing as mp
 import os
 import pathlib
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
@@ -81,7 +81,7 @@ obs_title            = {self.hips_name}
 dataproduct_type     = image
 dataproduct_subtype  = color
 hips_version         = 1.4
-hips_creation_date   = {datetime.now(tz=timezone.utc).isoformat()}
+hips_creation_date   = {datetime.now(tz=UTC).isoformat()}
 hips_status          = public master clonable
 hips_tile_format     = jpeg
 hips_order           = {self.max_order}
