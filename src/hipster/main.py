@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+import sys
 
 from jsonargparse import ArgumentParser
 
@@ -41,7 +42,7 @@ def main():
             print(f"  - {task.name}{' [SKIPPED]' if task.skip else ''}")
 
     if cfg.tasks is None:
-        exit("No tasks provided. Please specify tasks to execute.")
+        sys.exit("No tasks provided. Please specify tasks to execute.")
 
     os.makedirs(cfg.root_path, exist_ok=cfg.overwrite)
 

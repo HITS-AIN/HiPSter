@@ -70,7 +70,7 @@ class SpectrumPlotter:
         ax.plot(self.wavelengths, data, color=line_color, linewidth=1)
 
         y = np.linspace(0, spectrum_max, 100)
-        X, Y = np.meshgrid(self.wavelengths, y)
+        X, _Y = np.meshgrid(self.wavelengths, y)
 
         extent = (
             np.min(self.wavelengths),

@@ -7,7 +7,7 @@ os.environ.setdefault("HF_HUB_DISABLE_XET", "1")
 from huggingface_hub import snapshot_download
 
 
-def download_parquet_files(repo_id: str, local_dir: str, hf_token: str = None):
+def download_parquet_files(repo_id: str, local_dir: str, hf_token: str | None = None):
     """
     Downloads only the .parquet files from a specified Hugging Face dataset repository.
     """
@@ -25,7 +25,7 @@ def download_parquet_files(repo_id: str, local_dir: str, hf_token: str = None):
     print(f" Successfully downloaded parquet files to: {downloaded_path}")
 
 
-def download_onnx_models(repo_id: str, local_dir: str, hf_token: str = None):
+def download_onnx_models(repo_id: str, local_dir: str, hf_token: str | None = None):
     """
     Downloads only the .onnx files from a specified Hugging Face model repository.
     """
