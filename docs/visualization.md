@@ -25,4 +25,6 @@ hipster --config <path_to_config_file> --only_html --overwrite --html.url https:
 ```
 
 Then copy `root_path` to the web server so that it is served at that URL. The preview links inside a VOTable catalog are written when the catalog is generated, so re-run the
-{class}`~hipster.VOTableGenerator` with the final `html.url` as well.
+{class}`~hipster.VOTableGenerator` with the final `html.url` as well. The same applies to the
+`hips_service_url` in the `properties` file of a {class}`~hipster.HiPSCatalogGenerator`, which is
+set by its `build` stage.
