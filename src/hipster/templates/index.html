@@ -29,6 +29,12 @@
             catalogLayer{{ loop.index }}.hide();
             {% endfor %}
 
+            {% for catalog in catalogs %}
+            var hipsCatalog{{ loop.index }} = A.catalogHiPS('{{ catalog.url }}', {sourceSize:{{ catalog.size }}, onClick: 'showPopup', color: '{{ catalog.color }}', shape: '{{ catalog.shape }}', name: '{{ catalog.name }}'});
+            aladin.addCatalog(hipsCatalog{{ loop.index }});
+            hipsCatalog{{ loop.index }}.hide();
+            {% endfor %}
+
             aladin.setFoV(400.0);
         });
     </script>

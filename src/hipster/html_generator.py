@@ -58,6 +58,21 @@ class HTMLGenerator:
         """
         self._votables.append(votable)
 
+    @dataclass
+    class Catalog:
+        url: str
+        name: str
+        color: str
+        shape: str
+        size: int
+
+    def add_catalog(self, catalog: Catalog) -> None:
+        """Add a HiPS catalog layer to the HTML page.
+        Args:
+            catalog (Catalog): The HiPS catalog layer to add.
+        """
+        self._catalogs.append(catalog)
+
     def generate(self) -> None:
         """Generate the HTML page for the HiPS data."""
         print("Generating HTML page...")
