@@ -14,6 +14,7 @@ extensions = [
     "sphinxcontrib.bibtex",
     "sphinx_rtd_theme",
     "sphinx.ext.autodoc",
+    "sphinx.ext.autosummary",
     "sphinx.ext.napoleon",
     "sphinx.ext.viewcode",
     "sphinx_autodoc_typehints",
@@ -21,6 +22,7 @@ extensions = [
 
 bibtex_bibfiles = ["references.bib"]
 html_theme = "sphinx_rtd_theme"
+templates_path = ["_templates"]
 
 # HiPSter documents constructor arguments in __init__ docstrings
 autoclass_content = "both"

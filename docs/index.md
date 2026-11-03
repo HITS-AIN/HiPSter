@@ -25,10 +25,35 @@ If you use HiPSter in your research, please cite {cite}`Polsterer2024`.
 ```
 
 ```{toctree}
+:caption: Getting started
 :maxdepth: 2
 :hidden:
 
 install
-usage
+```
+
+```{toctree}
+:caption: User guide
+:maxdepth: 2
+:hidden:
+
+configuration
+tasks
+visualization
+```
+
+```{toctree}
+:caption: Reference
+:maxdepth: 2
+:hidden:
+
 api
+```
+
+```{toctree}
+:caption: Development
+:maxdepth: 2
+:hidden:
+
+contributing
 ```

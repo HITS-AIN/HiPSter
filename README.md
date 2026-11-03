@@ -25,23 +25,10 @@ and a catalog that can be visualized interactively on the surface of a sphere us
 pip install astro-hipster
 ```
 
-## Usage
-
-The `HiPSter` package provides a CLI to create HiPS tilings and a catalog from the spherical latent
-space representation.
-
-```bash
-hipster --config <path_to_config_file>
-```
-
-For more details run `hipster --help` or check the [documentation](https://astro-hipster.readthedocs.io/en/latest/usage.html).
-
-
 ## Documentation
 
-The `HiPSter` documentation, including the API reference, is available at:
-
-[Read The Docs](https://astro-hipster.readthedocs.io/en/latest/)
+The [HiPSter documentation](https://astro-hipster.readthedocs.io/en/latest/) covers the configuration,
+the available tasks, visualization, the API reference and how to contribute.
 
 
 ## Acknowledgments

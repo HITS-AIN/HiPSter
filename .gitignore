@@ -9,3 +9,4 @@ examples/config_work.yaml
 output/
 tmp/
 docs/_build/
+docs/generated/

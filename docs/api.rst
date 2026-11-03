@@ -1,7 +1,40 @@
 API Reference
 =============
 
-.. automodule:: hipster
-   :members:
-   :undoc-members:
-   :show-inheritance:
+.. currentmodule:: hipster
+
+Tasks
+-----
+
+.. autosummary::
+   :toctree: generated
+   :nosignatures:
+
+   HiPSGenerator
+   DatasetProjection
+   VOTableGenerator
+   NumberedHiPSGenerator
+   Task
+
+Image makers
+------------
+
+.. autosummary::
+   :toctree: generated
+   :nosignatures:
+
+   ImagePlotter
+   SpectrumPlotter
+   AbsorptionLinePlotter
+   Range
+
+Utilities
+---------
+
+.. autosummary::
+   :toctree: generated
+   :nosignatures:
+
+   Inference
+   HTMLGenerator
+   ImageGenerator
