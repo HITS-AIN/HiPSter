@@ -7,37 +7,36 @@ html:
   # url: https://space.h-its.org/emoji
   title: Emoji
   aladin_lite_version: 3.6.5
+  aladin_lite_url: https://space.h-its.org/aladin-lite/{version}/aladin.js
 
 tasks:
-  - class_path: hipster.DatasetProjection
-    init_args:
-      encoder:
-        model_path: data/emoji/model/vae/resnet18/S2/encoder.onnx
-      data_directory: data/emoji/dataset/data/train-00000-of-00001-38cc4fa96c139e86.parquet
-      image_maker:
-        class_path: hipster.ImagePlotter
-      max_order: 4
-      hierarchy: 4
-      hips_id: Emoji
-      hips_name: Emoji projection dewarped
-      hips_path: projection_dewarped
-      distortion_correction: true
-      skip: true
+  # - class_path: hipster.DatasetProjection
+  #   init_args:
+  #     encoder:
+  #       model_path: data/emoji/model/vae/resnet18/S2/encoder.onnx
+  #     data_directory: data/emoji/dataset/data/train-00000-of-00001-38cc4fa96c139e86.parquet
+  #     image_maker:
+  #       class_path: hipster.ImagePlotter
+  #     max_order: 4
+  #     hierarchy: 4
+  #     hips_id: Emoji
+  #     hips_name: Emoji projection dewarped
+  #     hips_path: projection_dewarped
+  #     distortion_correction: true
 
-  - class_path: hipster.DatasetProjection
-    init_args:
-      encoder:
-        model_path: data/emoji/model/vae/resnet18/S2/encoder.onnx
-      data_directory: data/emoji/dataset/data/train-00000-of-00001-38cc4fa96c139e86.parquet
-      image_maker:
-        class_path: hipster.ImagePlotter
-      max_order: 4
-      hierarchy: 4
-      hips_id: Emoji
-      hips_name: Emoji projection
-      hips_path: projection
-      distortion_correction: false
-      skip: true
+  # - class_path: hipster.DatasetProjection
+  #   init_args:
+  #     encoder:
+  #       model_path: data/emoji/model/vae/resnet18/S2/encoder.onnx
+  #     data_directory: data/emoji/dataset/data/train-00000-of-00001-38cc4fa96c139e86.parquet
+  #     image_maker:
+  #       class_path: hipster.ImagePlotter
+  #     max_order: 4
+  #     hierarchy: 4
+  #     hips_id: Emoji
+  #     hips_name: Emoji projection
+  #     hips_path: projection
+  #     distortion_correction: false
 
   - class_path: hipster.HiPSGenerator
     init_args:
@@ -64,4 +63,4 @@ tasks:
       hips_path: catalog
       color: red
       shape: circle
-      size: 5
+      size: 10
