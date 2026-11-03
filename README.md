@@ -1,6 +1,6 @@
 [![Build Status](https://github.com/HITS-AIN/hipster/actions/workflows/python-package.yml/badge.svg?branch=main)](https://github.com/HITS-AIN/hipster/actions/workflows/python-package.yml?branch=main)
-[![Documentation Status](https://readthedocs.org/projects/spherinator/badge/?version=latest)](https://spherinator.readthedocs.io/en/latest/?badge=latest)
-![versions](https://img.shields.io/badge/python-3.11%20%7C%203.12%20%7C%203.13-blue)
+[![Documentation Status](https://readthedocs.org/projects/astro-hipster/badge/?version=latest)](https://astro-hipster.readthedocs.io/en/latest/?badge=latest)
+![versions](https://img.shields.io/badge/python-3.12%20%7C%203.13-blue)
 
 # HiPSter
 
@@ -15,7 +15,7 @@ and a catalog that can be visualized interactively on the surface of a sphere us
 
 
 <p align="center">
-  <img src="images/P404_f2.png" width="400" height="400">
+  <img src="https://raw.githubusercontent.com/HITS-AIN/HiPSter/main/docs/assets/P404_f2.png" width="400" height="400">
 </p>
 
 
@@ -34,14 +34,14 @@ space representation.
 hipster --config <path_to_config_file>
 ```
 
-For more details run `hipster --help` or check the [documentation](https://spherinator.readthedocs.io/en/latest/hipster.html#command-line-interface).
+For more details run `hipster --help` or check the [documentation](https://astro-hipster.readthedocs.io/en/latest/usage.html).
 
 
 ## Documentation
 
-The `HiPSter` documentation is part of the Spherinator documentation and can be found at:
+The `HiPSter` documentation, including the API reference, is available at:
 
-[Read The Docs](https://spherinator.readthedocs.io/en/latest/hipster.html)
+[Read The Docs](https://astro-hipster.readthedocs.io/en/latest/)
 
 
 ## Acknowledgments
