@@ -36,7 +36,7 @@ cuda = [
     "nvidia-cudnn-cu13>=9.24.0.43",
 ]
 dev = [
-    "hipster[catalog]",
+    "astro-hipster[catalog]",
     "ipykernel>=6.29",
     "pre-commit>=4.7.0",
     "pytest>=8.3",
