@@ -6,10 +6,10 @@ resolution-markers = [
     "python_full_version >= '3.14' and sys_platform == 'emscripten'",
     "python_full_version >= '3.14' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version == '3.13.*' and sys_platform == 'win32'",
-    "python_full_version < '3.13' and sys_platform == 'win32'",
     "python_full_version == '3.13.*' and sys_platform == 'emscripten'",
-    "python_full_version < '3.13' and sys_platform == 'emscripten'",
     "python_full_version == '3.13.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+    "python_full_version < '3.13' and sys_platform == 'win32'",
+    "python_full_version < '3.13' and sys_platform == 'emscripten'",
     "python_full_version < '3.13' and sys_platform != 'emscripten' and sys_platform != 'win32'",
 ]
 required-markers = [
@@ -231,7 +231,7 @@ wheels = [
 
 [[package]]
 name = "astro-hipster"
-version = "0.1.1"
+version = "0.2"
 source = { editable = "." }
 dependencies = [
     { name = "astropy" },
@@ -257,6 +257,7 @@ cuda = [
     { name = "onnxruntime-gpu" },
 ]
 dev = [
+    { name = "hipster" },
     { name = "ipykernel" },
     { name = "pre-commit" },
     { name = "pytest" },
@@ -280,6 +281,7 @@ requires-dist = [
     { name = "gaiaxpy", specifier = ">=2.1" },
     { name = "healpy", specifier = ">=1.18" },
     { name = "hipscatalog-gen", marker = "extra == 'catalog'", specifier = ">=0.3.3" },
+    { name = "hipster", extras = ["catalog"], marker = "extra == 'dev'" },
     { name = "ipykernel", marker = "extra == 'dev'", specifier = ">=6.29" },
     { name = "jinja2", specifier = ">3.1" },
     { name = "jsonargparse", extras = ["omegaconf"], specifier = ">=4.37" },
@@ -1411,6 +1413,18 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/d4/f2/063ad462c46798bda368d9f666c350a67fd74a2ab74bcb57b39d73bc91cd/hipscatalog_gen-0.3.3.tar.gz", hash = "sha256:e348d68a4c9e28ec4a5568988ca7198a69f34c89b4e148fb030f2cb0062e5355", size = 82054, upload-time = "2026-09-01T13:59:49.61Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/87/9d/6ae57eb6661b6d36dec67ce1f5cd6033d59069d02d5ef42cffca61cf4fed/hipscatalog_gen-0.3.3-py3-none-any.whl", hash = "sha256:13c6b6f1f6228749f68289e06d129568901c1597d319b203c06237947bb62480", size = 84633, upload-time = "2026-09-01T13:59:47.955Z" },
+]
+
+[[package]]
+name = "hipster"
+version = "3.0.5"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "readerwriterlock" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/92/86/01f43a03676b18046d5b41c38dcd2d9f1d476343f07125684c007a0cd5b6/hipster-3.0.5.tar.gz", hash = "sha256:76de33e61636db63be7ea83779f0fd74cc54432fa53d46659903ea5ebb58ef8f", size = 2966, upload-time = "2019-12-01T21:55:37.42Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/e2/a0/febd144bf30a89df31f26ef0c6b48a5e99a03719b06ecb4ad4e04e30cc92/hipster-3.0.5-py3-none-any.whl", hash = "sha256:658108c001068984b825a515a49a264dce0abbc5ab31d1bc2783549e7cec04f4", size = 4524, upload-time = "2019-12-01T21:55:35.975Z" },
 ]
 
 [[package]]
@@ -3522,6 +3536,18 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/35/c1/80dd2d20d6e57bc68e1dce1e84bf3e76c9577c1bf728199985c8b4ea0fd1/pyzmq-27.2.0-cp315-cp315t-win32.whl", hash = "sha256:ac126d48cf18aa955daabef43bf0009ff76ad4deee437d09ecf15388214b5beb", size = 591073, upload-time = "2026-08-20T19:07:31.341Z" },
     { url = "https://files.pythonhosted.org/packages/f8/b5/33b781666f3f52ae834bc9c8e38f4f0483a826c5a91cccc993292007bf10/pyzmq-27.2.0-cp315-cp315t-win_amd64.whl", hash = "sha256:edce90a1e588ec63adbf612cc0ad582de4169cd216c7ae53c15f42a2ee902f35", size = 670701, upload-time = "2026-08-20T19:07:32.895Z" },
     { url = "https://files.pythonhosted.org/packages/6e/97/bc4f0edefb992df4fdebcf9f0cc40f631cd4ed277e1ed59ef2cd99a5c8c5/pyzmq-27.2.0-cp315-cp315t-win_arm64.whl", hash = "sha256:a843094b4d3d633bc3623e47a2ff50742d6af02bc1f7606aa2e67e971e21878d", size = 581985, upload-time = "2026-08-20T19:07:34.19Z" },
+]
+
+[[package]]
+name = "readerwriterlock"
+version = "1.0.10"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/d0/4a/a9eb837332a2a5eb8ab3d500178eadbfbc28d1588f0221a3fa45ece60537/readerwriterlock-1.0.10.tar.gz", hash = "sha256:d0e803d17569f70700137cd91c4219d2bae718794a1b0da9fd44eb189e58786d", size = 16751, upload-time = "2026-10-13T03:07:49.742Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/62/9c/d496912967d3c8d498e962f61a93bffc9304a0f09fd8e632a90a0b375d37/readerwriterlock-1.0.10-py3-none-any.whl", hash = "sha256:788c28ca2da19681e466609774252eb55a963286c6f7cf8ace13d0be21a69683", size = 10237, upload-time = "2026-10-13T03:07:48.745Z" },
 ]
 
 [[package]]
